@@ -177,18 +177,20 @@ async def process_batch(df_batch: pd.DataFrame, session: AsyncSession):
     for index, row in df_batch.iterrows():
         # Standardize basic types from pandas
         title = str(row.get("title", "")).strip()
-        company = str(row.get("company", "Unknown")).strip()
+        company = str(row.get("companyName", "Unknown")).strip()
         location = str(row.get("location", "")).strip()
-        description = str(row.get("description", "")).strip()
-        external_id = str(row.get("job_id", row.get("external_id", f"gen_{index}"))).strip()
-        apply_url = str(row.get("apply_url", row.get("url", ""))).strip()
+        description = str(row.get("jobDescription", "")).strip()
+        external_id = str(row.get("jobId", f"gen_{index}")).strip()
+        apply_url = str(row.get("url", "")).strip()
         is_remote = "remote" in location.lower() or "remote" in title.lower()
 
         raw_data = row.to_dict()
         # Sanitize NaNs from dict before JSON serialization
         raw_data = {k: (v if pd.notna(v) else None) for k, v in raw_data.items()}
 
-        skills = extract_skills(title + " " + description)
+        # Extract skills using title, description, and tagsAndSkills
+        tags_and_skills = str(row.get("tagsAndSkills", "")).strip()
+        skills = extract_skills(f"{title} {description} {tags_and_skills}")
 
         record = {
             "external_id": external_id,
@@ -201,28 +203,30 @@ async def process_batch(df_batch: pd.DataFrame, session: AsyncSession):
             "skills_required": skills,
             "apply_url": apply_url[:1000] if apply_url else None,
             "raw_data": raw_data,
-            "currency": "INR",  # fallback default
+            "currency": str(row.get("currency", "INR")).upper(),
             "salary_min": None,
             "salary_max": None
         }
 
         # Check if salary looks missing (or zero)
-        existing_min = row.get("salary_min")
-        existing_max = row.get("salary_max")
+        existing_min = row.get("minimumSalary")
+        existing_max = row.get("maximumSalary")
 
-        if pd.isna(existing_min) or pd.isna(existing_max) or existing_min == 0 or existing_max == 0:
+        if pd.isna(existing_min) or pd.isna(existing_max):
             # We must await the OpenAI estimation for this row
             # But to keep it non-blocking, we create tasks
             task = asyncio.create_task(estimate_salary(title, company, location, description))
             enrichment_tasks.append((record, task))
         else:
-            record["salary_min"] = int(existing_min)
-            record["salary_max"] = int(existing_max)
             try:
-                record["currency"] = str(row.get("currency", "INR")).upper()
-            except Exception:
+                record["salary_min"] = int(existing_min)
+            except (ValueError, TypeError):
                 pass
-                
+            try:
+                record["salary_max"] = int(existing_max)
+            except (ValueError, TypeError):
+                pass
+            
             enriched_rows.append(record)
 
     # Resolve all OpenAI bounds

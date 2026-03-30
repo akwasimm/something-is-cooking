@@ -1,0 +1,66 @@
+# ─────────────────────────────────────────────────────────────────
+# JobFor Backend — Environment Variables
+# Copy this file to .env and fill in real values.
+# NEVER commit .env to version control.
+# ─────────────────────────────────────────────────────────────────
+
+# ── Application ───────────────────────────────────────────────────
+PROJECT_NAME=JobFor API
+VERSION=0.1.0
+
+# ── Security ──────────────────────────────────────────────────────
+# Generate a strong key: python -c "import secrets; print(secrets.token_hex(32))"
+SECRET_KEY=change-this-to-a-random-64-char-hex-string
+ACCESS_TOKEN_EXPIRE_MINUTES=1440       # 24 hours
+REFRESH_TOKEN_EXPIRE_DAYS=30
+
+# ── PostgreSQL ────────────────────────────────────────────────────
+DATABASE_URL='postgresql://neondb_owner:npg_CTIvEhp69qYS@ep-fancy-smoke-amhn7pgq-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+POSTGRES_USER=jobfor
+POSTGRES_PASSWORD=jobfor_secret
+POSTGRES_DB=jobsearch
+POSTGRES_HOST=localhost                # use "db" inside Docker
+POSTGRES_PORT=5432
+
+# ── Redis ─────────────────────────────────────────────────────────
+REDIS_HOST=localhost                   # use "redis" inside Docker
+REDIS_PORT=6379
+REDIS_PASSWORD=redis_secret
+REDIS_DB=0
+
+# ── CORS ──────────────────────────────────────────────────────────
+ALLOWED_ORIGINS=["http://localhost:5173","http://localhost:3000"]
+
+# ── Debug / Logging ───────────────────────────────────────────────
+DB_ECHO=false                          # set true to log SQL queries
+
+# ── AI / OpenAI ───────────────────────────────────────────────────
+OPENAI_API_KEY=sk-your-openai-key-here
+OPENAI_MODEL=gpt-4o-mini               # default model for AI coach
+OPENAI_MAX_TOKENS=2048
+OPENAI_TEMPERATURE=0.7
+
+# ── Email (SMTP) ──────────────────────────────────────────────────
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+EMAILS_FROM_EMAIL=noreply@jobfor.ai
+EMAILS_FROM_NAME=JobFor
+
+# ── File Storage (S3-compatible) ──────────────────────────────────
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=jobfor-uploads
+# For local dev with MinIO:
+# AWS_ENDPOINT_URL=http://localhost:9000
+
+# ── Celery (Background Tasks) ─────────────────────────────────────
+# Defaults to the Redis URL above — override if using a separate broker
+CELERY_BROKER_URL=redis://:redis_secret@localhost:6379/1
+CELERY_RESULT_BACKEND=redis://:redis_secret@localhost:6379/2
+
+# ── Rate Limiting ─────────────────────────────────────────────────
+RATE_LIMIT_PER_MINUTE=60
+AI_DAILY_TOKEN_BUDGET=100000           # per user token cap

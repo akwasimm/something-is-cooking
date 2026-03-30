@@ -1,38 +1,54 @@
-from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
+from typing import Optional, List
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class JobBase(BaseModel):
+class JobSearchParams(BaseModel):
+    query: Optional[str] = None
+    location: Optional[str] = None
+    job_type: Optional[List[str]] = None
+    experience_level: Optional[List[str]] = None
+    salary_min: Optional[int] = None
+    remote: Optional[bool] = None
+    page: int = Field(default=1, ge=1)
+    limit: int = Field(default=20, ge=1)
+
+
+class JobResponse(BaseModel):
+    id: int
+    external_id: Optional[str] = None
     title: str
     company: str
-    location: str
-    description: Optional[str] = None
-    salary_min: Optional[int] = None
-    salary_max: Optional[int] = None
-    job_type: str = "full-time"
-
-
-class JobCreate(JobBase):
-    """Schema used when creating a new job."""
-    pass
-
-
-class JobUpdate(BaseModel):
-    """Schema used when partially updating a job."""
-    title: Optional[str] = None
-    company: Optional[str] = None
     location: Optional[str] = None
     description: Optional[str] = None
     salary_min: Optional[int] = None
     salary_max: Optional[int] = None
-    job_type: Optional[str] = None
+    currency: str
+    is_remote: bool
+    skills_required: Optional[List[str]] = None
+    apply_url: Optional[str] = None
+    posted_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
-class JobResponse(JobBase):
-    """Schema returned by the API."""
-    id: int
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+class PaginatedJobResponse(BaseModel):
+    data: List[JobResponse]
+    total: int
+    page: int
+    limit: int
 
-    model_config = {"from_attributes": True}
+
+class MatchBreakdown(BaseModel):
+    skills: float
+    content: float
+    experience: float
+    location: float
+    salary: float
+
+
+class RecommendedJobResponse(JobResponse):
+    match_score: float
+    match_breakdown: MatchBreakdown
+
+    model_config = ConfigDict(from_attributes=True)

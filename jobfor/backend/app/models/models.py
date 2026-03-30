@@ -174,6 +174,17 @@ class User(TimestampMixin, Base):
 
     last_login: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
+    # ── Tokens (Auth & Recovery) ─────────────────────────────────
+    refresh_token: Mapped[str | None] = mapped_column(
+        String(500), nullable=True, comment="Persisted JWT refresh token."
+    )
+    reset_token: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, index=True, comment="Hashed password reset token."
+    )
+    reset_token_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
     # ── Relationships ────────────────────────────────────────────
     profile: Mapped["Profile | None"] = relationship(
         "Profile",

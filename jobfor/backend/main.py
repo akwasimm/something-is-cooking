@@ -60,6 +60,11 @@ async def lifespan(app: FastAPI):
         logger.critical("❌ Redis is unreachable: %s — aborting startup.", exc)
         raise RuntimeError("Cannot connect to Redis.") from exc
 
+    # Scheduler Init
+    from app.services.scheduler_service import start_scheduler
+    logger.info("🕒 Initializing Background Sync Scheduler...")
+    start_scheduler()
+
     logger.info("✅ All services healthy. Serving requests.")
 
     yield  # ← application runs here

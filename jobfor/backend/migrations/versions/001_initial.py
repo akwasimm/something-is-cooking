@@ -18,6 +18,8 @@ depends_on = None
 
 
 def upgrade() -> None:
+    op.execute('CREATE EXTENSION IF NOT EXISTS vector;')
+    
     # ── Enums ──────────────────────────────────────────────────
     op.execute("CREATE TYPE user_role AS ENUM ('user', 'admin')")
     op.execute("CREATE TYPE remote_preference AS ENUM ('remote', 'onsite', 'hybrid', 'any')")
@@ -39,11 +41,15 @@ def upgrade() -> None:
         sa.Column("oauth_provider", sa.String(50), nullable=True),
         sa.Column("oauth_id", sa.String(255), nullable=True),
         sa.Column("last_login", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("refresh_token", sa.String(500), nullable=True),
+        sa.Column("reset_token", sa.String(255), nullable=True),
+        sa.Column("reset_token_expires_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
     )
     op.create_index("ix_users_email", "users", ["email"], unique=True)
     op.create_index("ix_users_oauth", "users", ["oauth_provider", "oauth_id"])
+    op.create_index("ix_users_reset_token", "users", ["reset_token"])
 
     # ── profiles ───────────────────────────────────────────────
     op.create_table(
