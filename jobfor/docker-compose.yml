@@ -1,0 +1,95 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────
+# JobFor — Docker Compose
+# Services: PostgreSQL 15, Redis 7, FastAPI Backend
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL 15 ────────────────────────────────────────────
+  db:
+    image: pgvector/pgvector:pg15
+    container_name: jobfor_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jobfor}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jobfor_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-jobsearch}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init_db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-jobfor} -d ${POSTGRES_DB:-jobsearch}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - jobfor_network
+
+  # ── Redis 7 ──────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: jobfor_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-redis_secret}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD:-redis_secret}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - jobfor_network
+
+  # ── FastAPI Backend ──────────────────────────────────────────
+  backend:
+    container_name: jobfor_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      # Override host values so container-to-container DNS is used
+      POSTGRES_HOST: db
+      REDIS_HOST: redis
+    volumes:
+      - ./backend:/app          # hot-reload in development
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - jobfor_network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+# ── Named Volumes ─────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ── Networks ──────────────────────────────────────────────────
+networks:
+  jobfor_network:
+    driver: bridge
