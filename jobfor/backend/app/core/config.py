@@ -106,8 +106,12 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://:redis_secret@localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://:redis_secret@localhost:6379/2"
 
+    # ── Job Market Integration API Keys ───────────────────────
+    ADZUNA_APP_ID: str = ""
+    ADZUNA_APP_KEY: str = ""
+    RAPIDAPI_KEY: str = ""
+
     # ── Rate Limiting ─────────────────────────────────────────
     RATE_LIMIT_PER_MINUTE: int = 60
-
 
 settings = Settings()

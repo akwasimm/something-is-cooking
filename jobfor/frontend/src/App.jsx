@@ -1,121 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import AppLayout from "./components/layout/AppLayout";
+import './index.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+// ── Placeholder Public Views ────────────────────────────────────────────────
+const LoginPlaceholder = () => (
+  <div style={{ padding: "4rem", textAlign: "center" }}>
+    <h2 style={{ marginBottom: "1rem", color: "var(--color-primary-dark)" }}>Login Gate</h2>
+    <p>Please log in securely leveraging the AI Auth Context.</p>
+  </div>
+);
 
+const RegisterPlaceholder = () => (
+    <div style={{ padding: "4rem", textAlign: "center" }}>
+      <h2 style={{ marginBottom: "1rem", color: "var(--color-primary)" }}>Join JobFor</h2>
+      <p>Register as a new candidate dynamically mapping DB Arrays.</p>
+    </div>
+);
+
+// ── Placeholder Protected Views ───────────────────────────────────────────────
+const DashboardPlaceholder = () => (
+  <div className="card">
+    <h3 style={{ marginBottom: "1rem" }}>Application Activity</h3>
+    <p style={{ color: "var(--text-secondary)" }}>Your saved jobs, active applications, and intelligence bounds evaluate natively here.</p>
+  </div>
+);
+
+const JobsPlaceholder = () => (
+  <div className="card">
+    <h3 style={{ marginBottom: "1rem" }}>Opportunity Discovery</h3>
+    <p style={{ color: "var(--text-secondary)" }}>The Recommendation AI Engine pushes optimized job roles natively into this viewport.</p>
+  </div>
+);
+
+const ProfilePlaceholder = () => (
+  <div className="card">
+    <h3 style={{ marginBottom: "1rem" }}>Candidate Profile</h3>
+    <p style={{ color: "var(--text-secondary)" }}>Manage structured `.pdf` NLP resumes natively here tracking intermediate structural proficiencies!</p>
+  </div>
+);
+
+const App = () => {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Access */}
+          <Route path="/login" element={<LoginPlaceholder />} />
+          <Route path="/register" element={<RegisterPlaceholder />} />
 
-      <div className="ticks"></div>
+          {/* Secure Routing Map -> AppLayout protects these endpoints cleanly */}
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPlaceholder />} />
+            <Route path="/jobs" element={<JobsPlaceholder />} />
+            <Route path="/insights" element={<div className="card">Insights Coming Soon</div>} />
+            <Route path="/big-opps" element={<div className="card">Big Opps Module Offline</div>} />
+            <Route path="/ai-coach" element={<div className="card">AI Coaching Terminal Loading...</div>} />
+            <Route path="/profile" element={<ProfilePlaceholder />} />
+          </Route>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          {/* Fallback 404 Route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
-
-export default App
+export default App;
