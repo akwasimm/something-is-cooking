@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # ──────────────────────────────────────────────────────────────
 
 engine = create_engine(
-    settings.DATABASE_URL,
+    settings.DB_URL,
     # Connection pool tuning — sensible defaults for a web service
     pool_size=10,            # max persistent connections
     max_overflow=20,         # extra connections allowed when pool is full
@@ -44,7 +44,7 @@ engine = create_engine(
 @event.listens_for(engine, "connect")
 def _set_sqlite_pragmas(dbapi_conn, connection_record):
     """Enable WAL mode and foreign keys when using SQLite (dev/testing)."""
-    if "sqlite" in settings.DATABASE_URL:
+    if "sqlite" in settings.DB_URL:
         cursor = dbapi_conn.cursor()
         cursor.execute("PRAGMA journal_mode=WAL")
         cursor.execute("PRAGMA foreign_keys=ON")

@@ -24,7 +24,7 @@ openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 class AiCoachService:
 
     @staticmethod
-    async def chat(db: AsyncSession, user_id: int, message: str, session_id: Optional[str] = None, context_tag: str = "general") -> ChatMessageResponse:
+    async def chat(db: AsyncSession, user_id: int, message: str, session_id: Optional[str] = None, context_tag: str = "general"):
         # Resolve distinct conversational namespace ID
         session_uuid = uuid.UUID(session_id) if session_id else uuid.uuid4()
 
@@ -42,8 +42,8 @@ class AiCoachService:
         
         # Hydrate text-heavy context
         if profile:
-            skill_text = ", ".join([s.skill.name for s in profile.user.skills]) if profile.user.skills else "None explicitly listed."
-            exp_text = " ".join([f"{e.job_title} at {e.company_name}." for e in profile.user.work_experiences])
+            skill_text = ", ".join([s.skill.name for s in profile.user.skills]) if getattr(profile.user, "skills", None) else "None explicitly listed."
+            exp_text = " ".join([f"{e.job_title} at {e.company_name}." for e in profile.user.work_experiences]) if getattr(profile.user, "work_experiences", None) else ""
             context_string = f"User Profile Background: Headline: {profile.headline}. Summary: {profile.summary}. Skills: {skill_text}. Experience: {exp_text}."
         else:
             context_string = "User profile is incomplete."
@@ -67,20 +67,28 @@ class AiCoachService:
             
         messages.append({"role": "user", "content": message})
 
-        # 3. Transmit matrix memory securely to OpenAI
+        # 3. Transmit matrix memory securely to OpenAI asynchronously iterating Event-Streams
         try:
-            response = await openai_client.chat.completions.create(
+            stream = await openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
-                temperature=0.7
+                temperature=0.7,
+                stream=True
             )
         except Exception as e:
             raise HTTPException(status_code=502, detail=f"AI Provider error: {str(e)}")
 
-        ai_reply = response.choices[0].message.content
-        tokens = response.usage.total_tokens
+        full_content = []
+        async for chunk in stream:
+            if chunk.choices and chunk.choices[0].delta.content:
+                text_blob = chunk.choices[0].delta.content
+                full_content.append(text_blob)
+                yield text_blob
 
-        # 4. Synchronously archive Request & Response objects in local DB limits
+        ai_reply = "".join(full_content)
+        tokens = (len(str(messages)) + len(ai_reply)) // 4
+
+        # 4. Synchronously archive Request & Response objects in local DB limits AFTER yielding boundary closes
         user_hist = ChatHistory(
             user_id=user_id,
             session_id=session_uuid,
@@ -98,12 +106,6 @@ class AiCoachService:
         )
         db.add_all([user_hist, ai_hist])
         await db.commit()
-
-        return ChatMessageResponse(
-            session_id=str(session_uuid),
-            response=ai_reply,
-            tokens_used=tokens
-        )
 
     @staticmethod
     async def review_resume(db: AsyncSession, user_id: int, resume_text: str) -> Dict[str, Any]:

@@ -2,8 +2,9 @@ import logging
 from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import asyncio
 from sqlalchemy import select, and_, or_
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.async_database import async_db_session
@@ -124,8 +125,8 @@ async def process_job_alerts() -> None:
     """
     async with async_db_session() as db:
         try:
-            # 1. Scope alerts structurally
-            stmt = select(JobAlert).where(JobAlert.is_active == True)
+            # 1. Scope alerts structurally natively joining User fields for Notifications dynamically
+            stmt = select(JobAlert).where(JobAlert.is_active == True).options(selectinload(JobAlert.user))
             cursor = await db.execute(stmt)
             active_alerts = cursor.scalars().all()
             
@@ -167,15 +168,27 @@ async def process_job_alerts() -> None:
                 if match_count > 0:
                     alert.last_sent = datetime.now(timezone.utc)
                     
+                    search_link = f"/jobs?query={alert.keywords[0] if alert.keywords else ''}"
+                    
                     notif = Notification(
                         user_id=alert.user_id,
                         type="JOB_ALERT",
                         title=f"New hits for '{alert.alert_name}'",
                         message=f"We discovered {match_count} new opportunities bridging your isolated alert parameters.",
-                        link=f"/jobs?query={alert.keywords[0] if alert.keywords else ''}"
+                        link=search_link
                     )
                     db.add(notif)
                     total_notifications += 1
+                    
+                    # 4. Trigger Async SMTP natively
+                    from app.services.email_service import send_job_alert_email
+                    if alert.user and alert.user.email:
+                        await send_job_alert_email(
+                            to_email=alert.user.email,
+                            job_count=match_count,
+                            alert_name=alert.alert_name,
+                            link=search_link
+                        )
             
             await db.commit()
             logger.info(f"Background Job Alerts successfully dispatched {total_notifications} notification mappings.")
@@ -183,17 +196,19 @@ async def process_job_alerts() -> None:
             logger.error(f"Alert executor halted securely avoiding cascade: {str(e)}")
 
 
-def start_scheduler() -> None:
+from app.core.celery_app import celery_app
+
+@celery_app.task(name="app.services.scheduler_service.sync_external_jobs_task")
+def sync_external_jobs_task() -> None:
     """
-    Initialize background AsyncIOScheduler linking specific functional logic inside looping interval triggers securely without exhausting FastAPI MainThread dependencies.
+    Synchronous celery task wrapping asynchronous sync explicitly safely targeting API endpoints continuously natively.
     """
-    scheduler = AsyncIOScheduler(timezone="UTC")
-    
-    # Trigger job sync hourly dynamically protecting your caches
-    scheduler.add_job(sync_external_jobs, 'interval', hours=1, id="sync_jobs")
-    
-    # Resolve alerts evaluating changes twice-a-day iteratively
-    scheduler.add_job(process_job_alerts, 'interval', hours=12, id="trigger_alerts")
-    
-    scheduler.start()
-    logger.info("AsyncIOScheduler operational and tracking jobs in background thread.")
+    asyncio.run(sync_external_jobs())
+
+
+@celery_app.task(name="app.services.scheduler_service.process_job_alerts_task")
+def process_job_alerts_task() -> None:
+    """
+    Synchronous celery task validating alert bindings safely triggering explicit SMTP pipelines against matching Job indices mapping cleanly.
+    """
+    asyncio.run(process_job_alerts())

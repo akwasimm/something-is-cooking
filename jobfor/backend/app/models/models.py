@@ -324,6 +324,16 @@ class Profile(Base):
     # ── Relationships ────────────────────────────────────────────
     user: Mapped["User"] = relationship("User", back_populates="profile")
 
+    __table_args__ = (
+        Index(
+            "ix_profiles_embedding_hnsw",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_with={"m": 16, "ef_construction": 64},
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+    )
+
     def __repr__(self) -> str:
         return f"<Profile id={self.id} user_id={self.user_id}>"
 
@@ -706,6 +716,13 @@ class JobCache(TimestampMixin, Base):
                 + func.cast(skills_required, Text),
             ),
             postgresql_using="gin",
+        ),
+        Index(
+            "ix_job_cache_embedding_hnsw",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_with={"m": 16, "ef_construction": 64},
+            postgresql_ops={"embedding": "vector_cosine_ops"},
         ),
     )
 

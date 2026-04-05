@@ -21,6 +21,17 @@ async def search_jobs(
     """
     return await JobService.search_jobs(db, params)
 
+
+@router.get("/trending", response_model=List[JobResponse])
+async def fetch_trending_jobs(
+    limit: int = 10,
+    db: AsyncSession = Depends(get_async_db),
+):
+    """
+    Fetches the highest velocity job arrays sorting organically by structural timestamps seamlessly.
+    """
+    return await JobService.get_trending_jobs(db, limit)
+
 @router.get("/user/recommendations", response_model=List[RecommendedJobResponse])
 async def get_job_recommendations(
     limit: int = 20,
@@ -32,6 +43,18 @@ async def get_job_recommendations(
     Powered by scikit-learn TF-IDF and structured heuristic algorithms.
     """
     return await RecommendationService.get_recommendations(db, current_user.id, limit)
+
+@router.get("/{job_id}/similar", response_model=List[JobResponse])
+async def get_similar_jobs(
+    job_id: int,
+    limit: int = 10,
+    db: AsyncSession = Depends(get_async_db),
+):
+    """
+    Computes heuristic Jaccard overlaps identifying strictly related Job arrays dynamically.
+    """
+    return await JobService.get_similar_jobs(db, job_id, limit)
+
 
 @router.get("/{job_id}", response_model=JobResponse)
 async def get_job_by_id(

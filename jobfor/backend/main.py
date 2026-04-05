@@ -50,20 +50,16 @@ async def lifespan(app: FastAPI):
         raise RuntimeError("Cannot connect to PostgreSQL.")
     logger.info("✅ PostgreSQL connected.")
 
-    # Redis check
+    # Redis check — warn but don't crash if Redis is unavailable (rate limiting degrades gracefully)
     try:
-        r = sync_redis.from_url(settings.REDIS_URL, decode_responses=True)
+        r = sync_redis.from_url(settings.REDIS_URL, decode_responses=True, socket_connect_timeout=3)
         r.ping()
         r.close()
         logger.info("✅ Redis connected.")
     except Exception as exc:
-        logger.critical("❌ Redis is unreachable: %s — aborting startup.", exc)
-        raise RuntimeError("Cannot connect to Redis.") from exc
+        logger.warning("⚠️  Redis unavailable: %s — rate limiting will be disabled.", exc)
 
-    # Scheduler Init
-    from app.services.scheduler_service import start_scheduler
-    logger.info("🕒 Initializing Background Sync Scheduler...")
-    start_scheduler()
+
 
     logger.info("✅ All services healthy. Serving requests.")
 
@@ -111,8 +107,15 @@ app.add_middleware(
 
 
 # ─────────────────────────────────────────────────────────────────
-# Global exception handlers
+# Global exception handlers & Rate Limiting System
 # ─────────────────────────────────────────────────────────────────
+
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+from app.core.rate_limit import limiter
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):

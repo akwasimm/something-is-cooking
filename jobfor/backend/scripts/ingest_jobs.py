@@ -15,7 +15,6 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 import spacy
-from openai import AsyncOpenAI
 from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -45,10 +44,6 @@ except ImportError:
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-# Initialize OpenAI Client
-# Assumes OPENAI_API_KEY is available in the environment
-openai_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Initialize SQLAlchemy Async Engine & Session
 engine = create_async_engine(
@@ -111,56 +106,6 @@ def extract_skills(text_content: str) -> List[str]:
     return list(extracted)
 
 
-async def estimate_salary(title: str, company: str, location: str, description: str) -> Optional[Dict[str, Any]]:
-    """
-    Queries OpenAI gpt-4o-mini to estimate reasonable bounds for an unlisted salary.
-    Respects a 1-second timeout between calls to avoid hitting Tier 1 rate limits.
-    """
-    # Defensive sleep to prevent rate limits
-    await asyncio.sleep(1.0)
-
-    prompt_context = f"Job Title: {title}\nCompany: {company}\nLocation: {location}\nDescription Extract: {str(description)[:1500]}"
-    
-    try:
-        response = await openai_client.chat.completions.create(
-            model="gpt-4o-mini",
-            temperature=0.0,  # Highly deterministic for data parsing
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are an expert HR data parser. Your task is to extract or intelligently estimate "
-                        "the expected ANNUAL salary for a given job. RULES: "
-                        "1. Provide the response as pure JSON matching this exact structure: "
-                        "{\"salaryMin\": Number, \"salaryMax\": Number, \"currency\": \"INR\" | \"USD\"}. "
-                        "2. Even if the job description doesn't explicitly state the salary, you MUST estimate "
-                        "a reasonable market rate based on the job title, company, and location. "
-                        "3. If the location is in India or the job is remote but aimed at India, use INR metrics. "
-                        "4. If it's a US or global remote role, use USD metrics. "
-                        "5. Ensure the numbers are integers."
-                    )
-                },
-                {"role": "user", "content": prompt_context}
-            ]
-        )
-        
-        raw_json_str = response.choices[0].message.content.strip()
-        # Clean Markdown wrappers
-        if raw_json_str.startswith("```json"):
-            raw_json_str = raw_json_str[7:]
-        if raw_json_str.startswith("```"):
-            raw_json_str = raw_json_str[3:]
-        if raw_json_str.endswith("```"):
-            raw_json_str = raw_json_str[:-3]
-            
-        parsed_salary = json.loads(raw_json_str.strip())
-        return parsed_salary
-        
-    except Exception as e:
-        logger.error(f"Failed to estimate salary for {title} @ {company}: {e}")
-        return None
-
-
 # ──────────────────────────────────────────────────────────────
 # 3. Batch Processing & Ingestion Core
 # ──────────────────────────────────────────────────────────────
@@ -171,7 +116,6 @@ async def process_batch(df_batch: pd.DataFrame, session: AsyncSession):
     a safe upsert (ON CONFLICT DO NOTHING) via SQLAlchemy 2.0 ORM.
     """
     
-    enrichment_tasks = []
     enriched_rows = []
 
     for index, row in df_batch.iterrows():
@@ -212,32 +156,19 @@ async def process_batch(df_batch: pd.DataFrame, session: AsyncSession):
         existing_min = row.get("minimumSalary")
         existing_max = row.get("maximumSalary")
 
-        if pd.isna(existing_min) or pd.isna(existing_max):
-            # We must await the OpenAI estimation for this row
-            # But to keep it non-blocking, we create tasks
-            task = asyncio.create_task(estimate_salary(title, company, location, description))
-            enrichment_tasks.append((record, task))
-        else:
+        if not pd.isna(existing_min):
             try:
                 record["salary_min"] = int(existing_min)
             except (ValueError, TypeError):
                 pass
+        
+        if not pd.isna(existing_max):
             try:
                 record["salary_max"] = int(existing_max)
             except (ValueError, TypeError):
                 pass
             
-            enriched_rows.append(record)
-
-    # Resolve all OpenAI bounds
-    if enrichment_tasks:
-        for record, task in enrichment_tasks:
-            result = await task
-            if result:
-                record["salary_min"] = result.get("salaryMin", None)
-                record["salary_max"] = result.get("salaryMax", None)
-                record["currency"] = result.get("currency", "INR")
-            enriched_rows.append(record)
+        enriched_rows.append(record)
         
     if not enriched_rows:
         return

@@ -177,8 +177,13 @@ async def delete_certification(
 
 # ── Resume Parsing ────────────────────────────────────────────────
 
+from app.core.rate_limit import limiter
+from fastapi import Request
+
 @router.post("/resume", response_model=Dict[str, Any], status_code=status.HTTP_200_OK)
+@limiter.limit("5/hour")
 async def upload_resume(
+    request: Request,
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_db)

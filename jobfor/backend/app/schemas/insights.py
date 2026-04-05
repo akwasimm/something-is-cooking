@@ -29,3 +29,13 @@ class SalaryInsightResponse(BaseModel):
     median: int
     max: int
     sampleSize: int
+
+
+class CompanyInsightResponse(BaseModel):
+    company: str
+    jobCount: int
+    isMassHiring: bool
+    salaryMin: Optional[int] = None
+    salaryMax: Optional[int] = None
+
+    model_config = {"from_attributes": True}

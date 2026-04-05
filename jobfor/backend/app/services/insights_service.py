@@ -256,3 +256,37 @@ class InsightsService:
             "missingCritical": critical_lists,
             "learningPath": learning_path
         }
+
+
+    @staticmethod
+    async def get_company_insights(db: AsyncSession, limit: int = 20) -> List[Dict[str, Any]]:
+        """
+        Structures explicit grouping queries natively tracking dynamic metadata aggregations without triggering Array faults locally.
+        """
+        stmt = (
+            select(
+                JobCache.company,
+                func.count(JobCache.id).label("job_count"),
+                func.min(JobCache.salary_min).label("salary_min"),
+                func.max(JobCache.salary_max).label("salary_max")
+            )
+            .where(and_(JobCache.is_active == True, JobCache.company != None))
+            .group_by(JobCache.company)
+            .order_by(func.count(JobCache.id).desc())
+            .limit(limit)
+        )
+        
+        cursor = await db.execute(stmt)
+        rows = cursor.all()
+        
+        results = []
+        for row in rows:
+            results.append({
+                "company": row.company,
+                "jobCount": row.job_count,
+                "isMassHiring": row.job_count >= 20,
+                "salaryMin": row.salary_min,
+                "salaryMax": row.salary_max
+            })
+            
+        return results

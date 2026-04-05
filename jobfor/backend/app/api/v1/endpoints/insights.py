@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.async_database import get_async_db
 from app.api.dependencies.auth import get_current_user
 from app.models.models import User
-from app.schemas.insights import SalaryInsightResponse, SkillDemand, SkillGapResponse
+from app.schemas.insights import SalaryInsightResponse, SkillDemand, SkillGapResponse, CompanyInsightResponse
 from app.services.insights_service import InsightsService
 
 
@@ -47,3 +47,15 @@ async def analyze_career_gap(
     Matches the user's specific skill structure dynamically against the top indexed market demands for a role, explicitly generating an AI-curated curriculum road-map bridging the numeric percentage void.
     """
     return await InsightsService.analyze_skill_gap(db, current_user.id, role)
+
+
+@router.get("/companies", response_model=List[CompanyInsightResponse])
+async def fetch_mass_hiring_companies(
+    limit: int = 20,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Aggregates native database rows sorting companies dynamically tracking Mass Hiring volumes entirely.
+    """
+    return await InsightsService.get_company_insights(db, limit)

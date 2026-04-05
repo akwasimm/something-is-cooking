@@ -1,46 +1,23 @@
-.loadingContainer {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--bg-base);
-  color: var(--text-secondary);
-  font-family: var(--font-heading);
-  gap: 1.5rem;
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-page);
 }
 
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--border-color);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.main {
+    flex: 1;
+    transition: margin-left var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.layoutWrapper {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  background-color: var(--bg-base);
-}
-
-.mainContent {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0; /* Prevents flex flex-grow overflowing horizontally */
-}
-
-.outletContainer {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  height: calc(100vh - var(--header-height));
+.content {
+    margin-top: 58px;
+    padding: var(--space-6);
+    flex: 1;
+    animation: fadeIn 0.25s ease;
+    will-change: opacity, transform;
+    max-width: 1400px;
+    width: 100%;
 }

@@ -33,7 +33,14 @@ logger = logging.getLogger(__name__)
 # ── Async Engine ────────────────────────────────────────────────
 
 def _build_async_url() -> str:
-    """Convert the psycopg2 URL to an asyncpg URL."""
+    """Convert psycopg2/postgres URL to an asyncpg-compatible async URL."""
+    base = settings.DATABASE_URL  # e.g. postgresql://... or postgresql+psycopg2://...
+    if base:
+        # Strip any existing driver suffix, then reattach asyncpg
+        url = base.split("://", 1)
+        if len(url) == 2:
+            return f"postgresql+asyncpg://{url[1]}"
+    # Fallback: build from individual parts
     return (
         f"postgresql+asyncpg://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}"
         f"@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"

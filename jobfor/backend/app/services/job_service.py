@@ -61,3 +61,66 @@ class JobService:
         if not job or not job.is_active:
             raise HTTPException(status_code=404, detail="Job not found")
         return job
+
+    @staticmethod
+    async def get_trending_jobs(db: AsyncSession, limit: int = 10) -> list[JobCache]:
+        """
+        Retrieves the newest array of listings explicitly targeting market volatility natively.
+        """
+        stmt = (
+            select(JobCache)
+            .where(JobCache.is_active == True)
+            .order_by(JobCache.posted_at.desc().nulls_last())
+            .limit(limit)
+        )
+        cursor = await db.execute(stmt)
+        return list(cursor.scalars().all())
+
+    @staticmethod
+    async def get_similar_jobs(db: AsyncSession, job_id: int, limit: int = 10) -> list[JobCache]:
+        """
+        Performs JSONB structural overlap querying locally returning natively weighted heuristic arrays.
+        """
+        # 1. Fetch Target Job
+        target_job = await JobService.get_job_by_id(db, job_id)
+        if not target_job.skills_required:
+            return []
+            
+        target_skills = set(str(s).lower().strip() for s in target_job.skills_required)
+        if not target_skills:
+            return []
+
+        # 2. Query potential matches sharing structural boundaries natively
+        stmt = (
+            select(JobCache)
+            .where(
+                JobCache.is_active == True,
+                JobCache.id != job_id,
+                JobCache.skills_required != None
+            )
+        )
+        cursor = await db.execute(stmt)
+        candidates = cursor.scalars().all()
+        
+        # 3. Compute Jaccard Index Locally
+        scored_candidates = []
+        for candidate in candidates:
+            if not candidate.skills_required:
+                continue
+                
+            c_skills = set(str(s).lower().strip() for s in candidate.skills_required)
+            intersection = len(target_skills.intersection(c_skills))
+            union = len(target_skills.union(c_skills))
+            
+            if union == 0:
+                continue
+                
+            jaccard_score = intersection / union
+            
+            # Require at least some overlap natively mitigating blank scores
+            if jaccard_score > 0:
+                scored_candidates.append((jaccard_score, candidate))
+                
+        # 4. Sort Descending & apply limits statically
+        scored_candidates.sort(key=lambda x: x[0], reverse=True)
+        return [c[1] for c in scored_candidates[:limit]]

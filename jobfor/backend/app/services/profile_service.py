@@ -208,19 +208,42 @@ class ProfileService:
         await self.db.delete(cert)
         await self.db.commit()
 
+    async def _calculate_profile_completion(self, profile: Profile) -> int:
+        """
+        Dynamically weights missing values establishing profile readiness 0-100 natively.
+        """
+        score = 0
+        if profile.first_name and profile.last_name: score += 15
+        if profile.headline or profile.summary: score += 20
+        if profile.phone: score += 10
+        if profile.location: score += 5
+        if profile.resume_url: score += 20
+        
+        if getattr(profile.user, "work_experiences", False) and len(profile.user.work_experiences) > 0:
+            score += 15
+        if getattr(profile.user, "educations", False) and len(profile.user.educations) > 0:
+            score += 10
+        if getattr(profile.user, "skills", False) and len(profile.user.skills) > 0:
+            score += 5
+            
+        return min(score, 100)
+
     # ── AI Resume Parsing ─────────────────────────────────────────────
 
     async def upload_and_parse_resume(self, user_id: int, file: "UploadFile") -> dict:
         import os
         import uuid
+        import json
+        from openai import AsyncOpenAI
+        from datetime import datetime
         from fastapi import UploadFile
-        from app.utils.nlp_processor import extract_text_from_pdf, extract_skills_from_text
-        from app.models.models import Skill, UserSkill, SkillProficiency
-
-        # 1. Read bytes
-        file_bytes = await file.read()
         
-        # 2. Local File System Management
+        from app.core.config import settings
+        from app.utils.nlp_processor import extract_text_from_pdf
+        from app.models.models import Skill, UserSkill, SkillProficiency, WorkExperience, Education
+
+        # 1. Read bytes & configure Storage
+        file_bytes = await file.read()
         upload_dir = "uploads"
         if not os.path.exists(upload_dir):
             os.makedirs(upload_dir)
@@ -231,51 +254,111 @@ class ProfileService:
         with open(file_path, "wb") as f:
             f.write(file_bytes)
             
-        # 3. Attach pathway to Profile
-        cursor = await self.db.execute(select(Profile).where(Profile.user_id == user_id))
+        # 2. Attach pathway to Profile
+        cursor = await self.db.execute(select(Profile).where(Profile.user_id == user_id).options(
+            selectinload(Profile.user).selectinload(User.work_experiences),
+            selectinload(Profile.user).selectinload(User.educations),
+            selectinload(Profile.user).selectinload(User.skills)
+        ))
         profile = cursor.scalars().first()
         if not profile:
             raise HTTPException(status_code=404, detail="Profile not found.")
             
         profile.resume_url = file_path
-        await self.db.commit()
-
-        # 4. Invoke the ML extraction loops natively
+        
+        # 3. ML NLP Extraction
         try:
             raw_text = extract_text_from_pdf(file_bytes)
-            found_skills = extract_skills_from_text(raw_text)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed parsing PDF: {str(e)}")
+
+        # 4. AsyncOpenAI Prompting (Structured JSON Boundary)
+        openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        system_prompt = """
+        You are an expert HR Parser. Extract data from the following resume text.
+        Return ONLY a strict JSON object mapping natively to these keys:
+        {
+          "first_name": "string",
+          "last_name": "string",
+          "phone": "string",
+          "summary": "string",
+          "skills": ["skill_1", "skill_2"],
+          "work_experience": [{"company_name": "str", "job_title": "str", "start_date": "YYYY-MM-DD", "end_date": "YYYY-MM-DD or null", "description": "str"}],
+          "education": [{"institution": "str", "degree": "str"}]
+        }
+        Leave fields empty or null if they cannot be determined.
+        """
+
+        try:
+            response = await openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                response_format={"type": "json_object"},
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": raw_text[:8000]} # Safe cutoff limits
+                ],
+                temperature=0.1
+            )
+            parsed_data = json.loads(response.choices[0].message.content)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"LLM parsing failed natively: {str(e)}")
+
+        # 5. Populate Structural Maps
+        if parsed_data.get("first_name"): profile.first_name = parsed_data["first_name"]
+        if parsed_data.get("last_name"): profile.last_name = parsed_data["last_name"]
+        if parsed_data.get("phone"): profile.phone = parsed_data["phone"]
+        if parsed_data.get("summary"): profile.summary = parsed_data["summary"]
+
+        # 5a. Skills
+        for skill_name in parsed_data.get("skills", []):
+            sk = str(skill_name).lower().strip()
+            if not sk: continue
             
-        # 5. Iteratively associate newly mapped traits to the User profile
-        for skill_name in found_skills:
-            # Upsert into structural Skill mapping
-            stmt_skill = select(Skill).where(Skill.name == skill_name)
-            s_cursor = await self.db.execute(stmt_skill)
-            existing_skill = s_cursor.scalars().first()
-            
+            stmt_skill = select(Skill).where(Skill.name == sk)
+            existing_skill = (await self.db.execute(stmt_skill)).scalars().first()
             if not existing_skill:
-                existing_skill = Skill(name=skill_name, is_trending=False)
+                existing_skill = Skill(name=sk, is_trending=False)
                 self.db.add(existing_skill)
                 await self.db.flush()
                 
-            # Upsert into UserSkill binding
-            stmt_user_skill = select(UserSkill).where(
-                UserSkill.user_id == user_id, 
-                UserSkill.skill_id == existing_skill.id
-            )
-            us_cursor = await self.db.execute(stmt_user_skill)
-            if not us_cursor.scalars().first():
-                new_binding = UserSkill(
-                    user_id=user_id,
-                    skill_id=existing_skill.id,
-                    proficiency=SkillProficiency.intermediate
-                )
-                self.db.add(new_binding)
+            stmt_user_skill = select(UserSkill).where(UserSkill.user_id == user_id, UserSkill.skill_id == existing_skill.id)
+            if not (await self.db.execute(stmt_user_skill)).scalars().first():
+                self.db.add(UserSkill(user_id=user_id, skill_id=existing_skill.id, proficiency=SkillProficiency.intermediate))
+
+        # 5b. Work Experience
+        for work in parsed_data.get("work_experience", []):
+            if work.get("company_name") and work.get("job_title"):
+                start_dt = None
+                end_dt = None
+                try: 
+                    if work.get("start_date"): start_dt = datetime.strptime(str(work["start_date"])[:10], "%Y-%m-%d").date()
+                    if work.get("end_date"): end_dt = datetime.strptime(str(work["end_date"])[:10], "%Y-%m-%d").date()
+                except ValueError: pass
                 
-        await self.db.commit()
+                self.db.add(WorkExperience(
+                    user_id=user_id,
+                    company_name=work["company_name"],
+                    job_title=work["job_title"],
+                    description=work.get("description"),
+                    start_date=start_dt or datetime(2010, 1, 1).date(),
+                    end_date=end_dt,
+                    is_current=True if work.get("end_date") in [None, ""] else False
+                ))
+
+        # 5c. Education
+        for edu in parsed_data.get("education", []):
+            if edu.get("institution"):
+                self.db.add(Education(
+                    user_id=user_id,
+                    institution=edu["institution"],
+                    degree=edu.get("degree")
+                ))
+
+        # 6. Recalculate global profile completion
+        profile.profile_completion = await self._calculate_profile_completion(profile)
         
+        await self.db.commit()
         return {
             "resume_url": file_path,
-            "extracted_skills": found_skills
+            "parsed_profile": parsed_data
         }

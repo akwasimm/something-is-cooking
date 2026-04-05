@@ -42,9 +42,14 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = "jobsearch"
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
+    # If DATABASE_URL is set directly in .env (e.g. NeonDB), use it
+    DATABASE_URL: str = ""
 
     @property
-    def DATABASE_URL(self) -> str:
+    def DB_URL(self) -> str:
+        """Returns the effective database URL — prefers DATABASE_URL env var over parts."""
+        if self.DATABASE_URL:
+            return self.DATABASE_URL
         return (
             f"postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
@@ -57,6 +62,9 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 6379
     REDIS_PASSWORD: str = "redis_secret"
     REDIS_DB: int = 0
+    # Upstash cloud Redis — used when local Redis is unavailable
+    UPSTASH_REDIS_REST_URL: str = ""
+    UPSTASH_REDIS_REST_TOKEN: str = ""
 
     @property
     def REDIS_URL(self) -> str:

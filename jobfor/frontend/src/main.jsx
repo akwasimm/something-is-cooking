@@ -1,10 +1,15 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import AppRouter from './router/index.jsx';
+import MobileBlocker from './components/layout/MobileBlocker.jsx';
+import './styles/global.css';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+/**
+ * Primary React application entry point.
+ * Bootstraps the root DOM node and injects the top-level Router provider configurations.
+ */
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <MobileBlocker>
+    <AppRouter />
+  </MobileBlocker>
+);

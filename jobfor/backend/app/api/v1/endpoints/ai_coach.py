@@ -1,10 +1,12 @@
 from typing import List, Dict, Any, Optional
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.async_database import get_async_db
 from app.api.dependencies.auth import get_current_user
 from app.models.models import User
+from app.core.rate_limit import limiter
 from app.schemas.ai_coach import (
     ChatMessageRequest,
     ChatMessageResponse,
@@ -21,13 +23,18 @@ from app.services.ai_coach_service import AiCoachService
 router = APIRouter(prefix="/ai-coach", tags=["AI Coach"])
 
 
-@router.post("/chat", response_model=ChatMessageResponse)
+@router.post("/chat")
+@limiter.limit("20/hour")
 async def chat_with_coach(
+    request: Request,
     data: ChatMessageRequest,
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_user)
 ):
-    return await AiCoachService.chat(db, current_user.id, data.message, data.session_id, data.context.value)
+    return StreamingResponse(
+        AiCoachService.chat(db, current_user.id, data.message, data.session_id, data.context.value),
+        media_type="text/event-stream"
+    )
 
 
 @router.post("/resume-review", response_model=Dict[str, Any])
