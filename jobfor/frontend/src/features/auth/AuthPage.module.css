@@ -1,121 +1,134 @@
-/* Auth Page – shared by Login and Register — Stitch light theme */
+/* ============================================================
+   AuthPage shared wrapper — dark mode glassmorphism
+   Used by LoginPage.jsx and RegisterPage.jsx (fallback styles)
+   ============================================================ */
 
 .page {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f0f7f3 0%, #f8f8f6 50%, #f0f0ff 100%);
+    background: var(--bg-base);
     padding: var(--space-8);
     position: relative;
+    overflow: hidden;
 }
 
+/* Ambient glows */
 .bg {
     position: fixed;
     inset: 0;
-    background: radial-gradient(ellipse at 20% 20%, rgba(13, 102, 52, 0.07), transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(201, 184, 240, 0.12), transparent 50%);
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.1), transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.08), transparent 50%);
     pointer-events: none;
 }
 
+/* ── Auth card (centered compact form) ───────────────────────── */
 .card {
     width: 100%;
     max-width: 460px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
     padding: 40px;
     position: relative;
     z-index: 1;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-lg);
     animation: fadeIn 0.3s ease;
 }
 
+/* ── Logo ─────────────────────────────────────────────────────── */
 .logo {
     display: inline-block;
     font-size: 20px;
     font-weight: 800;
-    margin-bottom: 20px;
-    color: #1a1a1a;
+    margin-bottom: var(--space-5);
+    color: var(--text-primary);
     font-family: var(--font-heading);
+    text-decoration: none;
 }
 
-.logo span {
-    color: var(--color-green);
-}
+.logo span { color: var(--color-primary); }
 
+/* ── Heading ──────────────────────────────────────────────────── */
 .card h1 {
     font-family: var(--font-heading);
-    font-size: 26px;
-    font-weight: 800;
-    margin-bottom: 6px;
-    color: #1a1a1a;
+    font-size: var(--font-size-h3);
+    font-weight: 900;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 24px;
+    color: var(--text-secondary);
+    font-size: var(--font-size-body-sm);
+    margin-bottom: var(--space-6);
+    line-height: 1.6;
 }
 
-/* Community badge (Register page) */
+/* ── Community badge ─────────────────────────────────────────── */
 .communityBadge {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: var(--color-green-glow);
-    border: 1px solid var(--color-green-pale);
+    gap: var(--space-3);
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.2);
     color: var(--text-secondary);
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    margin-bottom: 20px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-body-sm);
+    margin-bottom: var(--space-5);
 }
 
-.communityBadge .material-icons-round {
-    color: var(--color-green);
+.communityBadge .material-symbols-outlined {
+    color: var(--color-primary);
     font-size: 18px;
 }
 
+/* ── Form ─────────────────────────────────────────────────────── */
 .form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-4);
 }
 
 .field {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--space-2);
 }
 
 .field label {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: #888;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
 }
 
+/* ── Input wrap ──────────────────────────────────────────────── */
 .inputWrap {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: #f9f9f9;
-    border: 1.5px solid #e5e5e5;
-    border-radius: 10px;
-    padding: 11px 14px;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    gap: var(--space-3);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 11px var(--space-4);
+    transition: all var(--transition-fast);
 }
 
 .inputWrap:focus-within {
-    border-color: var(--color-green);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(13, 102, 52, 0.08);
+    border-color: var(--color-primary);
+    background: rgba(99, 102, 241, 0.06);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
-.inputWrap .material-icons-round {
-    color: #aaa;
+.inputWrap .material-symbols-outlined {
+    color: var(--text-muted);
     font-size: 18px;
     flex-shrink: 0;
 }
@@ -125,82 +138,94 @@
     background: none;
     border: none;
     outline: none;
-    color: #1a1a1a;
-    font-size: 15px;
+    color: var(--text-primary);
+    font-size: var(--font-size-body-sm);
     font-family: var(--font-body);
 }
 
-.inputWrap input::placeholder {
-    color: #bbb;
-}
+.inputWrap input::placeholder { color: var(--text-muted); }
 
+/* ── Forgot link ─────────────────────────────────────────────── */
 .forgotLink {
-    font-size: 12px;
-    color: var(--color-green);
+    font-size: var(--font-size-caption);
+    color: var(--color-primary);
     text-align: right;
     display: block;
     margin-top: 4px;
-    font-weight: 500;
+    font-weight: 600;
+    text-decoration: none;
 }
 
-.forgotLink:hover {
-    text-decoration: underline;
-}
+.forgotLink:hover { text-decoration: underline; }
 
+/* ── Terms ───────────────────────────────────────────────────── */
 .terms {
-    font-size: 12px;
-    color: #888;
+    font-size: var(--font-size-caption);
+    color: var(--text-muted);
     line-height: 1.6;
 }
 
-.terms a {
-    color: var(--color-green);
-}
+.terms a { color: var(--color-primary); font-weight: 500; }
 
+/* ── Submit button ───────────────────────────────────────────── */
 .submitBtn {
     padding: 13px;
-    background: var(--color-green);
+    background: var(--gradient-primary);
     color: #fff;
-    border-radius: 50px;
-    font-size: 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    transition: background 0.15s, box-shadow 0.15s;
+    transition: all var(--transition-normal);
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 48px;
-    box-shadow: 0 4px 16px rgba(13, 102, 52, 0.25);
+    box-shadow: var(--shadow-glow-primary);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    width: 100%;
 }
 
 .submitBtn:hover:not(:disabled) {
-    background: #0a5228;
-    box-shadow: 0 6px 20px rgba(13, 102, 52, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(99, 102, 241, 0.4);
 }
 
 .submitBtn:disabled {
     opacity: 0.55;
     cursor: not-allowed;
+    transform: none;
 }
 
+/* ── Spinner ─────────────────────────────────────────────────── */
 .spinner {
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(255, 255, 255, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: #fff;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
 }
 
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Toggle link ─────────────────────────────────────────────── */
 .toggle {
     text-align: center;
-    font-size: 14px;
-    color: #888;
-    margin-top: 16px;
+    font-size: var(--font-size-body-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-4);
 }
 
 .toggle a {
-    color: var(--color-green);
-    font-weight: 600;
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
 }
+
+.toggle a:hover { text-decoration: underline; }

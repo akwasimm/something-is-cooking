@@ -46,7 +46,7 @@ function ErrorMsg({ onRetry }) {
             textAlign: 'center', padding: '1.5rem', background: 'rgba(255,107,107,0.05)',
             border: '1px solid rgba(255,107,107,0.2)', borderRadius: 10
         }}>
-            <span className="material-icons-round" style={{ color: '#ff6b6b', display: 'block', marginBottom: 6 }}>wifi_off</span>
+            <span className="material-symbols-outlined" style={{ color: '#ff6b6b', display: 'block', marginBottom: 6 }}>wifi_off</span>
             <p style={{ color: '#ff6b6b' }}>Couldn't load jobs</p>
             <button onClick={onRetry} style={{
                 marginTop: 8, padding: '4px 14px', borderRadius: 6, border: '1px solid rgba(255,107,107,0.4)',
@@ -90,13 +90,13 @@ export default function BigOppsPage() {
     return (
         <div className={styles.page}>
             <div className={styles.badge}>
-                <span className="material-icons-round">rocket_launch</span> 🚀 BIG OPPORTUNITIES
+                <span className="material-symbols-outlined">rocket_launch</span> 🚀 BIG OPPORTUNITIES
             </div>
 
             {/* Mass Hiring / Hot Jobs */}
             <section className={styles.card}>
                 <h2 className={styles.sectionTitle}>
-                    <span className="material-icons-round">group_add</span> HOT JOBS NOW
+                    <span className="material-symbols-outlined">group_add</span> HOT JOBS NOW
                 </h2>
                 {loading ? <Skeleton /> : error ? <ErrorMsg onRetry={fetchData} /> : (
                     massHiring.length === 0 ? (
@@ -127,7 +127,7 @@ export default function BigOppsPage() {
             {/* Remote Jobs */}
             <section className={styles.card}>
                 <h2 className={styles.sectionTitle}>
-                    <span className="material-icons-round">public</span> REMOTE OPPORTUNITIES
+                    <span className="material-symbols-outlined">public</span> REMOTE OPPORTUNITIES
                 </h2>
                 {loading ? <Skeleton /> : error ? <ErrorMsg onRetry={fetchData} /> : (
                     remote.length === 0 ? (
@@ -156,7 +156,7 @@ export default function BigOppsPage() {
             {/* On-Site Jobs */}
             <section className={styles.card}>
                 <h2 className={styles.sectionTitle}>
-                    <span className="material-icons-round">location_city</span> ON-SITE ROLES
+                    <span className="material-symbols-outlined">location_city</span> ON-SITE ROLES
                 </h2>
                 {loading ? <Skeleton /> : error ? <ErrorMsg onRetry={fetchData} /> : (
                     onsite.length === 0 ? (
@@ -165,7 +165,7 @@ export default function BigOppsPage() {
                         <div className={styles.campusGrid}>
                             {onsite.map(j => (
                                 <div key={j.id} className={styles.campusCard}>
-                                    <span className="material-icons-round">location_on</span>
+                                    <span className="material-symbols-outlined">location_on</span>
                                     <div>
                                         <h3>{j.title}</h3>
                                         <p>{j.company} · {j.location}</p>

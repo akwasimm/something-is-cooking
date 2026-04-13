@@ -11,6 +11,8 @@ Sections:
   §6  Application Tracking (ATS)   — SavedJob, JobApplication
   §7  AI Coach & Analytics         — ChatHistory, UserActivity, JobAlert,
                                      Notification, MarketInsightCache
+  §8  User Assets                  — JobCollection, UserResume
+  §9  AI Recommendations & Extras  — AIJobRecommendation, AICoachTip, ResumeAnalysis
 """
 
 from __future__ import annotations
@@ -225,6 +227,23 @@ class User(TimestampMixin, Base):
     notifications: Mapped[list["Notification"]] = relationship(
         "Notification", back_populates="user", cascade="all, delete-orphan",
     )
+    # §8 — User Assets
+    resumes: Mapped[list["UserResume"]] = relationship(
+        "UserResume", back_populates="user", cascade="all, delete-orphan",
+    )
+    job_collections: Mapped[list["JobCollection"]] = relationship(
+        "JobCollection", back_populates="user", cascade="all, delete-orphan",
+    )
+    # §9 — AI Recommendations & Extras
+    ai_recommendations: Mapped[list["AIJobRecommendation"]] = relationship(
+        "AIJobRecommendation", back_populates="user", cascade="all, delete-orphan",
+    )
+    ai_coach_tips: Mapped[list["AICoachTip"]] = relationship(
+        "AICoachTip", back_populates="user", cascade="all, delete-orphan",
+    )
+    resume_analyses: Mapped[list["ResumeAnalysis"]] = relationship(
+        "ResumeAnalysis", back_populates="user", cascade="all, delete-orphan",
+    )
 
     __table_args__ = (
         Index("ix_users_oauth", "oauth_provider", "oauth_id"),
@@ -303,6 +322,10 @@ class Profile(Base):
     career_interests: Mapped[list[Any] | None] = mapped_column(
         JSONB, nullable=True,
         comment='e.g. ["Machine Learning", "Backend Engineering"]',
+    )
+    target_roles: Mapped[list[Any] | None] = mapped_column(
+        JSONB, nullable=True,
+        comment='Preferred job role titles, e.g. ["Solutions Architect", "CTO"].',
     )
 
     # ── Gamification ─────────────────────────────────────────────
@@ -766,9 +789,25 @@ class SavedJob(TimestampMixin, Base):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     tags: Mapped[list[Any] | None] = mapped_column(JSONB, nullable=True)
 
+    # Cached match score at save time (0-100); avoids recomputing vector similarity
+    match_score: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="AI match % captured at the moment the user saved this job.",
+    )
+    # Optional grouping into a user-defined collection (e.g. 'Top Priority')
+    collection_id: Mapped[int | None] = mapped_column(
+        BigInteger,
+        ForeignKey("job_collections.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     # ── Relationships ────────────────────────────────────────────
     user: Mapped["User"] = relationship("User", back_populates="saved_jobs")
     job: Mapped["JobCache | None"] = relationship("JobCache", back_populates="saved_by")
+    collection: Mapped["JobCollection | None"] = relationship(
+        "JobCollection", back_populates="saved_jobs",
+    )
 
     __table_args__ = (
         UniqueConstraint("user_id", "job_id", name="uq_saved_jobs_user_job"),
@@ -829,6 +868,39 @@ class JobApplication(TimestampMixin, Base):
     feedback: Mapped[str | None] = mapped_column(Text, nullable=True)
     salary_offered: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
+    # ── Kanban Board Fields ───────────────────────────────────────
+    # These power the drag-and-drop tracker on /applied (JobForDashboard).
+    kanban_column: Mapped[str] = mapped_column(
+        String(50),
+        default="applied",
+        nullable=False,
+        comment="Visual kanban column: 'applied'|'viewed'|'interviewing'|'offered'|'closed'.",
+    )
+    kanban_position: Mapped[int] = mapped_column(
+        SmallInteger, default=0, nullable=False,
+        comment="Sort order within the kanban column; updated on drag-and-drop.",
+    )
+    status_label: Mapped[str | None] = mapped_column(
+        String(100), nullable=True,
+        comment='Human-readable status shown on the card, e.g. "Awaiting Response".',
+    )
+    status_icon: Mapped[str | None] = mapped_column(
+        String(100), nullable=True,
+        comment="Material Symbols icon name shown on the card, e.g. 'schedule', 'event'.",
+    )
+    time_label: Mapped[str | None] = mapped_column(
+        String(100), nullable=True,
+        comment='Display label for recency, e.g. "2 days ago", "Tomorrow", "Viewed Today".',
+    )
+    time_label_bg: Mapped[str | None] = mapped_column(
+        String(20), nullable=True,
+        comment="Hex colour for the time pill background, e.g. '#D8B4FE'.",
+    )
+    time_label_color: Mapped[str | None] = mapped_column(
+        String(20), nullable=True,
+        comment="Hex colour for the time pill text. Defaults to #000000 if NULL.",
+    )
+
     # ── Relationships ────────────────────────────────────────────
     user: Mapped["User"] = relationship("User", back_populates="applications")
     job: Mapped["JobCache | None"] = relationship("JobCache", back_populates="applications")
@@ -837,6 +909,7 @@ class JobApplication(TimestampMixin, Base):
         UniqueConstraint("user_id", "job_id", name="uq_applications_user_job"),
         Index("ix_applications_user_status", "user_id", "status"),
         Index("ix_applications_follow_up", "follow_up_date", "status"),
+        Index("ix_applications_kanban", "user_id", "kanban_column", "kanban_position"),
     )
 
     def __repr__(self) -> str:
@@ -1061,4 +1134,389 @@ class MarketInsightCache(Base):
         return (
             f"<MarketInsightCache id={self.id} type={self.insight_type!r} "
             f"expires={self.expires_at}>"
+        )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §8 — User Assets
+# ══════════════════════════════════════════════════════════════════════════════
+
+class JobCollection(TimestampMixin, Base):
+    """
+    User-defined grouping of saved jobs (e.g. 'Top Priority', 'Remote Roles').
+
+    Displayed as a sidebar filter on /saved (SavedJobs page). Each saved job
+    can optionally belong to one collection via SavedJob.collection_id.
+    `icon` holds a Material Symbols icon name for the UI pill.
+    `is_default` marks the system-generated 'All Saved' collection that every
+    user has automatically — this collection cannot be deleted.
+    """
+
+    __tablename__ = "job_collections"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+
+    name: Mapped[str] = mapped_column(
+        String(200), nullable=False,
+        comment='Display name, e.g. "Top Priority", "Remote Roles", "Startup Tech".',
+    )
+    icon: Mapped[str | None] = mapped_column(
+        String(100), nullable=True,
+        comment="Material Symbols icon name shown in the sidebar, e.g. 'priority_high'.",
+    )
+    icon_color: Mapped[str | None] = mapped_column(
+        String(20), nullable=True,
+        comment="Hex colour for the icon, e.g. '#1A4D2E'.",
+    )
+    is_default: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False,
+        comment="True for the auto-created 'All Saved' collection (non-deletable).",
+    )
+
+    # ── Relationships ────────────────────────────────────────────
+    user: Mapped["User"] = relationship("User", back_populates="job_collections")
+    saved_jobs: Mapped[list["SavedJob"]] = relationship(
+        "SavedJob", back_populates="collection",
+    )
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "name", name="uq_job_collections_user_name"),
+    )
+
+    def __repr__(self) -> str:
+        return f"<JobCollection id={self.id} user_id={self.user_id} name={self.name!r}>"
+
+
+class UserResume(Base):
+    """
+    Multiple CV / resume files uploaded by a user.
+
+    Supports the 06. Resumes section in /profile (EditProfile page).
+    Only one resume is the `is_default` at a time — enforced by application
+    logic (SET is_default=FALSE for all others before setting the new one).
+    `file_url` points to object storage (e.g. S3 / GCS).
+    `label` is an optional user-given nickname (e.g. 'CTO-Tailored').
+    `parsed_text` stores the plain-text extraction so the resume analyser
+    can compare content without re-parsing on every request.
+    """
+
+    __tablename__ = "user_resumes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+
+    file_name: Mapped[str] = mapped_column(
+        String(500), nullable=False,
+        comment='Original filename, e.g. "Alex_Chen_Cloud_Arch_2024.pdf".',
+    )
+    file_url: Mapped[str] = mapped_column(
+        String(1000), nullable=False,
+        comment="Object-storage URL (S3 / GCS pre-signed or public path).",
+    )
+    file_size_kb: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    file_type: Mapped[str | None] = mapped_column(
+        String(20), nullable=True,
+        comment="MIME extension: 'pdf' or 'docx'.",
+    )
+    label: Mapped[str | None] = mapped_column(
+        String(200), nullable=True,
+        comment="User-given nickname, e.g. 'CTO-Tailored'.",
+    )
+    is_default: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False,
+        comment="Exactly one resume per user should be the active default.",
+    )
+    parsed_text: Mapped[str | None] = mapped_column(
+        Text, nullable=True,
+        comment="Plain-text content extracted from the file for NLP / LLM analysis.",
+    )
+    uploaded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False,
+    )
+
+    # ── Relationships ────────────────────────────────────────────
+    user: Mapped["User"] = relationship("User", back_populates="resumes")
+    analyses: Mapped[list["ResumeAnalysis"]] = relationship(
+        "ResumeAnalysis", back_populates="resume", cascade="all, delete-orphan",
+    )
+
+    __table_args__ = (
+        Index("ix_user_resumes_user_default", "user_id", "is_default"),
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<UserResume id={self.id} user_id={self.user_id} "
+            f"file={self.file_name!r} default={self.is_default}>"
+        )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §9 — AI Recommendations & Extras
+# ══════════════════════════════════════════════════════════════════════════════
+
+class AIJobRecommendation(TimestampMixin, Base):
+    """
+    Pre-computed AI job recommendation for a specific user.
+
+    Powers the /ai (AIRecommendations) page and the 'Top Picks' widget on
+    /user (UserDashboard). The ML pipeline runs nightly (or on profile change)
+    to compute vector similarity between profiles.embedding and job_cache.embedding,
+    stores the top-N results here, and enriches each with a breakdown of
+    individual match dimensions so the frontend doesn't need to recompute.
+
+    `recommendation_type`:
+      - 'top_pick'  : user's highest-scoring matches (shown in the hero grid)
+      - 'new_match' : jobs posted in the last 48 h that score > threshold
+      - 'missed'    : high-scoring jobs the user viewed but didn't save/apply
+
+    `match_reasons` is a JSONB string array of human-readable explanations
+    generated by the LLM from the matched skill/experience overlap.
+    `missing_skill` / `missing_skill_tip` power the 'Missing Skill Alert' card.
+    """
+
+    __tablename__ = "ai_job_recommendations"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    job_id: Mapped[int | None] = mapped_column(
+        BigInteger, ForeignKey("job_cache.id", ondelete="CASCADE"),
+        nullable=True, index=True,
+    )
+
+    # ── Overall score ─────────────────────────────────────────────
+    match_score: Mapped[int] = mapped_column(
+        SmallInteger, nullable=False,
+        comment="Overall match percentage 0-100 (cosine similarity scaled).",
+    )
+    rank: Mapped[int] = mapped_column(
+        SmallInteger, nullable=False,
+        comment="Relative rank within the user's recommendation list (1 = best).",
+    )
+
+    # ── Dimension breakdown ───────────────────────────────────────
+    skills_alignment: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="0-100: proportion of required skills the user already has.",
+    )
+    experience_fit: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="0-100: how well the user's experience level matches the role.",
+    )
+    location_match: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="0-100: alignment between job location and user's preferred locations.",
+    )
+    salary_match: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="0-100: overlap between job salary range and user's expected range.",
+    )
+
+    # ── LLM-generated narrative ───────────────────────────────────
+    match_reasons: Mapped[list[Any] | None] = mapped_column(
+        JSONB, nullable=True,
+        comment='Human-readable reasons, e.g. ["Expert in Figma", "B2B SaaS exp"].',
+    )
+
+    # ── Skill gap alert ───────────────────────────────────────────
+    missing_skill: Mapped[str | None] = mapped_column(
+        String(200), nullable=True,
+        comment="Top skill from this job that is absent from the user's profile.",
+    )
+    missing_skill_tip: Mapped[str | None] = mapped_column(
+        Text, nullable=True,
+        comment="LLM-generated actionable tip for acquiring the missing skill.",
+    )
+
+    # ── Categorisation & lifecycle ────────────────────────────────
+    recommendation_type: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="top_pick", index=True,
+        comment="'top_pick' | 'new_match' | 'missed'.",
+    )
+    is_dismissed: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False,
+        comment="True when the user explicitly hides this recommendation.",
+    )
+    expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True,
+        comment="Recommendation is stale and should be regenerated after this time.",
+    )
+
+    # ── Relationships ────────────────────────────────────────────
+    user: Mapped["User"] = relationship("User", back_populates="ai_recommendations")
+    job: Mapped["JobCache | None"] = relationship("JobCache")
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "job_id", name="uq_ai_recs_user_job"),
+        Index("ix_ai_recs_user_rank", "user_id", "rank"),
+        Index("ix_ai_recs_user_type", "user_id", "recommendation_type"),
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<AIJobRecommendation id={self.id} user_id={self.user_id} "
+            f"job_id={self.job_id} score={self.match_score} type={self.recommendation_type}>"
+        )
+
+
+class AICoachTip(TimestampMixin, Base):
+    """
+    AI-generated personalised tip delivered to the user's dashboard.
+
+    The coach background worker analyses a user's recent activity, skill gaps,
+    and application outcomes to generate short actionable insights. Each tip
+    has a `tip_type` so the frontend can route the CTA to the right page:
+
+      - 'skill_gap'          → CTA links to /profile (Update Skills)
+      - 'profile_boost'      → CTA links to /profile
+      - 'application_advice' → CTA links to /applied
+      - 'market_insight'     → CTA links to /insights
+
+    `is_read` is toggled by the frontend when the user dismisses or acts on
+    the tip. Only the most recent unread tip per user is surfaced on the
+    dashboard — the rest are stored for analytics.
+    """
+
+    __tablename__ = "ai_coach_tips"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+
+    tip_text: Mapped[str] = mapped_column(
+        Text, nullable=False,
+        comment="The AI-generated insight shown verbatim on the dashboard card.",
+    )
+    tip_type: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="skill_gap", index=True,
+        comment="'skill_gap' | 'profile_boost' | 'application_advice' | 'market_insight'.",
+    )
+    cta_label: Mapped[str | None] = mapped_column(
+        String(100), nullable=True,
+        comment='Button label on the dashboard card, e.g. "Update Skills".',
+    )
+    cta_url: Mapped[str | None] = mapped_column(
+        String(300), nullable=True,
+        comment="Relative URL the CTA button routes to, e.g. '/profile'.",
+    )
+    is_read: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, index=True,
+        comment="Toggled True when the user reads or dismisses the tip.",
+    )
+    expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True,
+        comment="Tips are auto-expired so stale advice doesn't persist indefinitely.",
+    )
+
+    # ── Relationships ────────────────────────────────────────────
+    user: Mapped["User"] = relationship("User", back_populates="ai_coach_tips")
+
+    __table_args__ = (
+        Index("ix_ai_tips_user_unread", "user_id", "is_read"),
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<AICoachTip id={self.id} user_id={self.user_id} "
+            f"type={self.tip_type!r} read={self.is_read}>"
+        )
+
+
+class ResumeAnalysis(TimestampMixin, Base):
+    """
+    Persisted result of an AI resume-analysis run.
+
+    Powers the /analyzer (ResumeAnalyzer) page. Each analysis optionally
+    references a specific `resume_id` and a target `job_id` so the user
+    can compare multiple resumes against the same role (or vice versa).
+
+    Score columns (0-100):
+      - `overall_score`  : weighted composite
+      - `ats_score`      : how well the resume parses through ATS screening
+      - `keyword_score`  : match rate for keywords in the job description
+      - `format_score`   : structural clarity and formatting quality
+
+    JSONB columns store the full LLM output for rich frontend rendering without
+    requiring schema changes when the AI prompt evolves.
+    """
+
+    __tablename__ = "resume_analyses"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    resume_id: Mapped[int | None] = mapped_column(
+        BigInteger,
+        ForeignKey("user_resumes.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    job_id: Mapped[int | None] = mapped_column(
+        BigInteger,
+        ForeignKey("job_cache.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    # ── Scores ─────────────────────────────────────────────────────
+    overall_score: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="Weighted composite score 0-100.",
+    )
+    ats_score: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="ATS parsing compatibility score 0-100.",
+    )
+    keyword_score: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="Keyword coverage vs. job description 0-100.",
+    )
+    format_score: Mapped[int | None] = mapped_column(
+        SmallInteger, nullable=True,
+        comment="Structural clarity and formatting quality 0-100.",
+    )
+
+    # ── LLM analysis output ────────────────────────────────────────
+    strengths: Mapped[list[Any] | None] = mapped_column(
+        JSONB, nullable=True,
+        comment='Array of strength highlights, e.g. ["Strong Python skills"].',
+    )
+    improvements: Mapped[list[Any] | None] = mapped_column(
+        JSONB, nullable=True,
+        comment='Actionable improvement suggestions, e.g. ["Add quantified results"].',
+    )
+    missing_keywords: Mapped[list[Any] | None] = mapped_column(
+        JSONB, nullable=True,
+        comment="Keywords in the job description absent from the resume.",
+    )
+    ai_summary: Mapped[str | None] = mapped_column(
+        Text, nullable=True,
+        comment="Full LLM-generated narrative summary of the analysis.",
+    )
+
+    # ── Relationships ────────────────────────────────────────────
+    user: Mapped["User"] = relationship("User", back_populates="resume_analyses")
+    resume: Mapped["UserResume | None"] = relationship(
+        "UserResume", back_populates="analyses",
+    )
+    job: Mapped["JobCache | None"] = relationship("JobCache")
+
+    def __repr__(self) -> str:
+        return (
+            f"<ResumeAnalysis id={self.id} user_id={self.user_id} "
+            f"resume_id={self.resume_id} score={self.overall_score}>"
         )

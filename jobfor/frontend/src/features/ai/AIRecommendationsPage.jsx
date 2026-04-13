@@ -29,7 +29,7 @@ function fmtSalary(min, max) {
 function EmptyState({ icon, title, sub }) {
     return (
         <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>
-            <span className="material-icons-round" style={{ fontSize: 36, display: 'block', marginBottom: 8 }}>{icon}</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 36, display: 'block', marginBottom: 8 }}>{icon}</span>
             <p style={{ fontWeight: 600, color: '#ccc' }}>{title}</p>
             <p style={{ fontSize: '0.85rem' }}>{sub}</p>
         </div>
@@ -49,7 +49,7 @@ function ErrorState({ onRetry }) {
             textAlign: 'center', padding: '2rem', background: 'rgba(255,107,107,0.05)',
             border: '1px solid rgba(255,107,107,0.2)', borderRadius: 12
         }}>
-            <span className="material-icons-round" style={{ fontSize: 36, color: '#ff6b6b', display: 'block', marginBottom: 8 }}>wifi_off</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 36, color: '#ff6b6b', display: 'block', marginBottom: 8 }}>wifi_off</span>
             <p style={{ color: '#ff6b6b', fontWeight: 600 }}>Couldn't load recommendations</p>
             <p style={{ color: '#888', fontSize: '0.82rem', marginBottom: 12 }}>Make sure backend is running at localhost:3001</p>
             <button onClick={onRetry} style={{
@@ -99,7 +99,7 @@ export default function AIRecommendationsPage() {
     return (
         <div className={styles.page}>
             <div className={styles.badge}>
-                <span className="material-icons-round">stars</span> AI RECOMMENDATIONS
+                <span className="material-symbols-outlined">stars</span> AI RECOMMENDATIONS
             </div>
 
             <h2 className={styles.sectionLabel}>TOP PICKS FOR YOU</h2>
@@ -138,7 +138,7 @@ export default function AIRecommendationsPage() {
                             <div className={styles.reasons}>
                                 {(job.skills || '').split(' ').filter(Boolean).slice(0, 3).map(skill => (
                                     <span key={skill} className={styles.reason}>
-                                        <span className="material-icons-round">check_circle</span>{skill}
+                                        <span className="material-symbols-outlined">check_circle</span>{skill}
                                     </span>
                                 ))}
                             </div>
@@ -151,7 +151,7 @@ export default function AIRecommendationsPage() {
             <div className={styles.twoCol}>
                 <section className={styles.card}>
                     <h2 className={styles.cardTitle}>
-                        <span className="material-icons-round">new_releases</span> Trending Jobs
+                        <span className="material-symbols-outlined">new_releases</span> Trending Jobs
                     </h2>
                     {trending.length === 0 ? (
                         <EmptyState icon="trending_up" title="No trending jobs" sub="Check back soon." />
@@ -171,7 +171,7 @@ export default function AIRecommendationsPage() {
 
                 <section className={styles.card}>
                     <h2 className={styles.cardTitle}>
-                        <span className="material-icons-round">history</span> Recently Posted
+                        <span className="material-symbols-outlined">history</span> Recently Posted
                     </h2>
                     {trending.slice(0, 2).map(j => (
                         <div key={j.id} className={styles.missedRow}>

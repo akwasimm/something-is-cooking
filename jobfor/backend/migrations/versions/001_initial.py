@@ -20,14 +20,6 @@ depends_on = None
 def upgrade() -> None:
     op.execute('CREATE EXTENSION IF NOT EXISTS vector;')
     
-    # ── Enums ──────────────────────────────────────────────────
-    op.execute("CREATE TYPE user_role AS ENUM ('user', 'admin')")
-    op.execute("CREATE TYPE remote_preference AS ENUM ('remote', 'onsite', 'hybrid', 'any')")
-    op.execute("CREATE TYPE skill_proficiency AS ENUM ('beginner', 'intermediate', 'advanced', 'expert')")
-    op.execute("CREATE TYPE application_status AS ENUM ('applied', 'viewed', 'screening', 'interviewing', 'offered', 'rejected', 'accepted', 'withdrawn')")
-    op.execute("CREATE TYPE message_type AS ENUM ('user', 'assistant', 'system')")
-    op.execute("CREATE TYPE alert_frequency AS ENUM ('instant', 'daily', 'weekly')")
-    op.execute("CREATE TYPE employment_type AS ENUM ('full_time', 'part_time', 'contract', 'freelance', 'internship', 'apprenticeship')")
 
     # ── users ───────────────────────────────────────────────────
     op.create_table(

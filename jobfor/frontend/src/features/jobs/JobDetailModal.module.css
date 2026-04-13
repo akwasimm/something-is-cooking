@@ -99,7 +99,7 @@
     color: #777;
 }
 
-.jobSub .material-icons-round {
+.jobSub .material-symbols-outlined {
     font-size: 14px;
     color: #aaa;
 }
@@ -119,7 +119,7 @@
     margin-top: 2px;
 }
 
-.closeBtn .material-icons-round {
+.closeBtn .material-symbols-outlined {
     font-size: 18px;
     color: #888;
 }
@@ -129,7 +129,7 @@
     border-color: #fca5a5;
 }
 
-.closeBtn:hover .material-icons-round {
+.closeBtn:hover .material-symbols-outlined {
     color: #ef4444;
 }
 
@@ -157,7 +157,7 @@
     font-weight: 500;
 }
 
-.stat .material-icons-round {
+.stat .material-symbols-outlined {
     font-size: 14px;
     color: #888;
 }
@@ -175,7 +175,7 @@
     margin-left: auto;
 }
 
-.matchBadge .material-icons-round {
+.matchBadge .material-symbols-outlined {
     font-size: 14px;
 }
 
@@ -241,7 +241,7 @@
     margin-bottom: 12px;
 }
 
-.sectionTitle .material-icons-round {
+.sectionTitle .material-symbols-outlined {
     font-size: 16px;
     color: var(--color-green);
 }
@@ -271,19 +271,19 @@
     line-height: 1.5;
 }
 
-.list li .material-icons-round {
+.list li .material-symbols-outlined {
     font-size: 15px;
     flex-shrink: 0;
     margin-top: 2px;
 }
 
 /* Responsibilities list — green arrow */
-.section:nth-of-type(2) .list li .material-icons-round {
+.section:nth-of-type(2) .list li .material-symbols-outlined {
     color: var(--color-green);
 }
 
 /* Requirements list — check_circle */
-.section:nth-of-type(3) .list li .material-icons-round {
+.section:nth-of-type(3) .list li .material-symbols-outlined {
     color: var(--color-success);
 }
 
@@ -339,7 +339,7 @@
     transition: all 0.15s;
 }
 
-.saveBtn .material-icons-round {
+.saveBtn .material-symbols-outlined {
     font-size: 17px;
 }
 
@@ -373,7 +373,7 @@
     box-shadow: 0 4px 16px rgba(13, 102, 52, 0.25);
 }
 
-.applyBtn .material-icons-round {
+.applyBtn .material-symbols-outlined {
     font-size: 17px;
 }
 

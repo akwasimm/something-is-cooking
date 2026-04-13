@@ -80,7 +80,7 @@ export default function SkillGapPage() {
                     textAlign: 'center', padding: '2rem', background: 'rgba(255,107,107,0.05)',
                     border: '1px solid rgba(255,107,107,0.2)', borderRadius: 12, marginBottom: 24
                 }}>
-                    <span className="material-icons-round" style={{ color: '#ff6b6b', fontSize: 32, display: 'block' }}>wifi_off</span>
+                    <span className="material-symbols-outlined" style={{ color: '#ff6b6b', fontSize: 32, display: 'block' }}>wifi_off</span>
                     <p style={{ color: '#ff6b6b' }}>Couldn't load profile data</p>
                     <button onClick={fetchProfile} style={{
                         marginTop: 8, padding: '4px 14px', borderRadius: 6,
@@ -93,7 +93,7 @@ export default function SkillGapPage() {
                 {/* Skills You Have */}
                 <section className={styles.card}>
                     <h2 className={styles.cardTitle} style={{ color: 'var(--color-success)' }}>
-                        <span className="material-icons-round">check_circle</span> Skills You Have
+                        <span className="material-symbols-outlined">check_circle</span> Skills You Have
                     </h2>
                     {loading ? <p style={{ color: '#888' }}>Loading skills…</p> : (
                         skillsHave.length === 0 ? (
@@ -123,7 +123,7 @@ export default function SkillGapPage() {
                 {/* Career Progress */}
                 <section className={styles.card}>
                     <h2 className={styles.cardTitle} style={{ color: 'var(--color-warning)' }}>
-                        <span className="material-icons-round">trending_up</span> Profile Strength
+                        <span className="material-symbols-outlined">trending_up</span> Profile Strength
                     </h2>
                     {loading ? <p style={{ color: '#888' }}>Loading…</p> : (
                         <div className={styles.skillsList}>
@@ -153,7 +153,7 @@ export default function SkillGapPage() {
             <section className={styles.card}>
                 <div className={styles.cardHeader}>
                     <h2 className={styles.cardTitle}>
-                        <span className="material-icons-round">route</span> Personalised Learning Path
+                        <span className="material-symbols-outlined">route</span> Personalised Learning Path
                     </h2>
                 </div>
                 <div className={styles.learningPath}>
@@ -170,11 +170,11 @@ export default function SkillGapPage() {
                             <a href="/profile"
                                 className={`${styles.viewBtn} ${s.status === 'locked' ? styles.locked : ''}`}>
                                 {s.status === 'done' ? (
-                                    <><span className="material-icons-round">check_circle</span> Done</>
+                                    <><span className="material-symbols-outlined">check_circle</span> Done</>
                                 ) : s.status === 'locked' ? (
-                                    <><span className="material-icons-round">lock</span> Locked</>
+                                    <><span className="material-symbols-outlined">lock</span> Locked</>
                                 ) : (
-                                    <><span className="material-icons-round">open_in_new</span> Start</>
+                                    <><span className="material-symbols-outlined">open_in_new</span> Start</>
                                 )}
                             </a>
                         </div>

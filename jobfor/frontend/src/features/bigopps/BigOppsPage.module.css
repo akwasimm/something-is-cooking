@@ -1,318 +1,340 @@
-/* Big Opportunities – matches actual BigOppsPage.jsx class names */
+/* ============================================================
+   Big Opportunities — dark mode, matches BigOppsPage.jsx names
+   ============================================================ */
 
 .page {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    animation: fadeIn 0.3s ease;
+    gap: var(--space-5);
+    animation: fadeIn 0.25s ease;
 }
 
+/* ── Hero badge ─────────────────────────────────────────────── */
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: var(--color-green-pale);
-    color: var(--color-green);
-    font-size: 12px;
+    gap: var(--space-2);
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 50px;
+    padding: 5px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(16, 185, 129, 0.2);
     width: fit-content;
+    font-family: var(--font-mono);
 }
 
-.badge .material-icons-round {
-    font-size: 16px;
-}
+.badge .material-symbols-outlined,
+.badge .material-symbols-outlined { font-size: 14px; }
 
-/* Shared card */
+/* ── Shared card ─────────────────────────────────────────────── */
 .card {
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 14px;
-    padding: 22px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
 }
 
 .sectionTitle {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-family: var(--font-heading);
-    font-size: 13px;
+    gap: var(--space-2);
+    font-size: var(--font-size-caption);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #1a1a1a;
-    margin-bottom: 16px;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
 }
 
-.sectionTitle .material-icons-round {
-    color: var(--color-green);
-    font-size: 18px;
+.sectionTitle .material-symbols-outlined,
+.sectionTitle .material-symbols-outlined {
+    color: var(--color-primary);
+    font-size: 16px;
 }
 
-/* Mass Hiring */
+/* ── Mass Hiring ─────────────────────────────────────────────── */
 .massGrid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
 .massCard {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px;
-    background: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    transition: all 0.15s;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
 }
 
 .massCard:hover {
-    border-color: var(--color-green);
+    border-color: rgba(99, 102, 241, 0.3);
+    background: rgba(99, 102, 241, 0.05);
+    transform: translateX(3px);
 }
 
 .massLogo {
     width: 44px;
     height: 44px;
-    border-radius: 10px;
-    background: var(--color-green);
+    border-radius: var(--radius-md);
+    background: var(--gradient-success);
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 800;
     flex-shrink: 0;
     font-family: var(--font-heading);
+    box-shadow: var(--shadow-glow-success);
 }
 
-.massInfo {
-    flex: 1;
-    min-width: 0;
-}
+.massInfo { flex: 1; min-width: 0; }
 
 .massInfo h3 {
-    font-size: 14px;
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
+    margin-bottom: 2px;
 }
 
 .massInfo p {
-    font-size: 12px;
-    color: #888;
-    margin-top: 2px;
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
-.massRight {
-    text-align: right;
-    flex-shrink: 0;
-}
+.massRight { text-align: right; flex-shrink: 0; }
 
 .roles {
-    font-size: 13px;
-    font-weight: 700;
-    color: #1a1a1a;
+    font-size: var(--font-size-body-sm);
+    font-weight: 800;
+    color: var(--text-primary);
     display: block;
+    font-family: var(--font-mono);
 }
 
 .urgency {
     font-size: 10px;
     font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 50px;
+    padding: 2px 9px;
+    border-radius: var(--radius-full);
     display: inline-block;
     margin-top: 4px;
+    font-family: var(--font-mono);
 }
 
 .urgency.green {
-    background: var(--color-green-pale);
-    color: var(--color-green);
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .urgency.orange {
-    background: #fff3e0;
-    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--color-warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
+/* ── Apply Buttons ───────────────────────────────────────────── */
 .applyBtn {
     padding: 8px 18px;
-    background: var(--color-green);
+    background: var(--gradient-primary);
     color: #fff;
-    border-radius: 50px;
-    font-size: 12px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-caption);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    transition: background 0.15s;
+    transition: all var(--transition-normal);
     flex-shrink: 0;
     white-space: nowrap;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    box-shadow: var(--shadow-glow-primary);
 }
 
 .applyBtn:hover {
-    background: #0a5228;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
 }
 
-/* FAANG */
+.applyBtnSm {
+    padding: 6px 14px;
+    background: var(--gradient-primary);
+    color: #fff;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+    transition: all var(--transition-normal);
+    white-space: nowrap;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.applyBtnSm:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-glow-primary);
+}
+
+/* ── FAANG ───────────────────────────────────────────────────── */
 .faangGrid {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-3);
 }
 
 .faangCard {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px;
-    background: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    transition: all 0.15s;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
 }
 
 .faangCard:hover {
-    border-color: var(--color-green);
-    background: var(--color-green-glow);
+    border-color: rgba(139, 92, 246, 0.3);
+    background: rgba(139, 92, 246, 0.05);
+    transform: translateX(3px);
 }
 
 .faangLogo {
     width: 40px;
     height: 40px;
-    border-radius: 8px;
-    background: var(--color-purple-pale);
-    color: var(--color-purple);
+    border-radius: var(--radius-md);
+    background: var(--gradient-purple);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 800;
     flex-shrink: 0;
     font-family: var(--font-heading);
 }
 
-.faangInfo {
-    flex: 1;
-    min-width: 0;
-}
+.faangInfo { flex: 1; min-width: 0; }
 
 .faangInfo h3 {
-    font-size: 14px;
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
+    margin-bottom: 2px;
 }
 
 .faangInfo p {
-    font-size: 12px;
-    color: #888;
-    margin-top: 2px;
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
 .salary {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--font-size-caption);
+    font-weight: 700;
     color: var(--color-success);
     display: block;
     margin-top: 3px;
+    font-family: var(--font-mono);
 }
 
 .faangRight {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 8px;
+    gap: var(--space-2);
     flex-shrink: 0;
 }
 
 .growth {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--color-success);
+    font-family: var(--font-mono);
 }
 
-.applyBtnSm {
-    padding: 6px 14px;
-    background: var(--color-green);
-    color: #fff;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-    transition: background 0.15s;
-    white-space: nowrap;
-}
-
-.applyBtnSm:hover {
-    background: #0a5228;
-}
-
-/* Campus */
+/* ── Campus ──────────────────────────────────────────────────── */
 .campusGrid {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-3);
 }
 
 .campusCard {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px;
-    background: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    transition: all 0.15s;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
 }
 
 .campusCard:hover {
-    border-color: var(--color-purple);
+    border-color: rgba(139, 92, 246, 0.3);
+    background: rgba(139, 92, 246, 0.05);
 }
 
-.campusCard>.material-icons-round {
+.campusCard > .material-symbols-outlined,
+.campusCard > .material-symbols-outlined {
     color: var(--color-purple);
     font-size: 22px;
     flex-shrink: 0;
 }
 
-.campusCard>div {
-    flex: 1;
-}
+.campusCard > div { flex: 1; }
 
 .campusCard h3 {
-    font-size: 14px;
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
+    margin-bottom: 2px;
 }
 
 .campusCard p {
-    font-size: 12px;
-    color: #888;
-    margin-top: 2px;
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
 .campusCard span:last-of-type {
-    font-size: 11px;
-    background: var(--color-purple-pale);
+    font-size: 10px;
+    background: rgba(139, 92, 246, 0.1);
     color: var(--color-purple);
-    padding: 2px 8px;
-    border-radius: 50px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    padding: 2px 9px;
+    border-radius: var(--radius-full);
     display: inline-block;
     margin-top: 4px;
+    font-family: var(--font-mono);
+    font-weight: 700;
 }
 
 .registerBtn {
-    padding: 8px 16px;
-    background: var(--color-purple);
+    padding: 8px 18px;
+    background: var(--gradient-purple);
     color: #fff;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-    transition: background 0.15s;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-caption);
+    font-weight: 700;
+    transition: all var(--transition-normal);
     flex-shrink: 0;
     white-space: nowrap;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
 }
 
 .registerBtn:hover {
-    background: #7c3aed;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.4);
 }

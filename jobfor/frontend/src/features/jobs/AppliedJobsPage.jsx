@@ -66,7 +66,7 @@ export default function AppliedJobsPage() {
         <div className={styles.page}>
             <div className={styles.header}><h1>Applied Jobs</h1></div>
             <div className={styles.empty}>
-                <span className="material-icons-round" style={{ color: '#ff6b6b' }}>wifi_off</span>
+                <span className="material-symbols-outlined" style={{ color: '#ff6b6b' }}>wifi_off</span>
                 <h3>Couldn't load applications</h3>
                 <p>Make sure the backend is running at localhost:3001</p>
                 <button onClick={fetchApplications} className={styles.browseBtn}>Retry</button>
@@ -83,7 +83,7 @@ export default function AppliedJobsPage() {
 
             {applications.length === 0 ? (
                 <div className={styles.empty}>
-                    <span className="material-icons-round">send</span>
+                    <span className="material-symbols-outlined">send</span>
                     <h3>No applications yet</h3>
                     <p>Start applying to jobs to track your progress here.</p>
                     <Link to="/jobs" className={styles.browseBtn}>Find Jobs</Link>
@@ -107,7 +107,7 @@ export default function AppliedJobsPage() {
                                 <span className={`${styles.status} ${styles[s.color]}`}>{s.label}</span>
                                 <button className={styles.viewBtn}
                                     onClick={() => addToast(`Viewing ${j.title || 'application'}`, 'info')}>
-                                    <span className="material-icons-round">open_in_new</span>
+                                    <span className="material-symbols-outlined">open_in_new</span>
                                 </button>
                             </div>
                         );

@@ -103,12 +103,15 @@ def run_migrations_online() -> None:
     Uses NullPool so that the migration process doesn't hold an idle
     connection open after `alembic upgrade head` completes.
     """
+    section = config.get_section(config.config_ini_section, {})
+    section["sqlalchemy.url"] = config.get_main_option("sqlalchemy.url")
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        section,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
+    print("!!! MIGRATING AGAINST URL !!! :", repr(connectable.url))
     with connectable.connect() as connection:
         # Verify connectivity before attempting migrations
         connection.execute(text("SELECT 1"))

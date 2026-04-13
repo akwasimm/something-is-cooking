@@ -67,7 +67,7 @@ export default function Navbar({ sidebarCollapsed }) {
             </div>
 
             <div className={styles.searchWrap}>
-                <span className="material-icons-round">search</span>
+                <span className="material-symbols-outlined">search</span>
                 <input
                     className={styles.searchInput}
                     type="text"
@@ -77,7 +77,7 @@ export default function Navbar({ sidebarCollapsed }) {
                 />
                 {search && (
                     <button className={styles.clearSearch} onClick={() => setSearch('')}>
-                        <span className="material-icons-round">close</span>
+                        <span className="material-symbols-outlined">close</span>
                     </button>
                 )}
             </div>
@@ -89,7 +89,7 @@ export default function Navbar({ sidebarCollapsed }) {
                         onClick={() => { setNotifOpen(v => !v); setProfileOpen(false); }}
                         aria-label="Notifications"
                     >
-                        <span className="material-icons-round">notifications</span>
+                        <span className="material-symbols-outlined">notifications</span>
                         {unreadCount > 0 && (
                             <span className={styles.notifBadge}>{unreadCount}</span>
                         )}
@@ -111,7 +111,7 @@ export default function Navbar({ sidebarCollapsed }) {
                             )}
                             {notifs.map((n) => (
                                 <div key={n.id} className={`${styles.notifItem} ${!n.isRead ? styles.unread : ''}`}>
-                                    <span className={`material-icons-round ${styles.notifIcon}`}>
+                                    <span className={`material-symbols-outlined ${styles.notifIcon}`}>
                                         {n.type === 'JOB_ALERT' ? 'work' :
                                             n.type === 'APPLICATION_UPDATE' ? 'send' :
                                                 n.type === 'AI_RECOMMENDATION' ? 'smart_toy' : 'notifications'}
@@ -144,14 +144,14 @@ export default function Navbar({ sidebarCollapsed }) {
                             </div>
                             <div className={styles.dropdownDivider} />
                             <a href="/profile" className={styles.dropdownItem}>
-                                <span className="material-icons-round">manage_accounts</span> My Profile
+                                <span className="material-symbols-outlined">manage_accounts</span> My Profile
                             </a>
                             <a href="/settings" className={styles.dropdownItem}>
-                                <span className="material-icons-round">settings</span> Settings
+                                <span className="material-symbols-outlined">settings</span> Settings
                             </a>
                             <div className={styles.dropdownDivider} />
                             <button className={`${styles.dropdownItem} ${styles.logoutItem}`}>
-                                <span className="material-icons-round">logout</span> Sign Out
+                                <span className="material-symbols-outlined">logout</span> Sign Out
                             </button>
                         </div>
                     )}

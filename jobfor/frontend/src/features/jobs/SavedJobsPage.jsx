@@ -92,7 +92,7 @@ export default function SavedJobsPage() {
         <div className={styles.page}>
             <div className={styles.header}><h1>Saved Jobs</h1></div>
             <div className={styles.empty}>
-                <span className="material-icons-round" style={{ color: '#ff6b6b' }}>wifi_off</span>
+                <span className="material-symbols-outlined" style={{ color: '#ff6b6b' }}>wifi_off</span>
                 <h3>Couldn't load saved jobs</h3>
                 <p>Make sure the backend is running at localhost:3001</p>
                 <button onClick={fetchSaved} className={styles.browseBtn}>Retry</button>
@@ -109,7 +109,7 @@ export default function SavedJobsPage() {
 
             {jobs.length === 0 ? (
                 <div className={styles.empty}>
-                    <span className="material-icons-round">bookmark_border</span>
+                    <span className="material-symbols-outlined">bookmark_border</span>
                     <h3>No saved jobs yet</h3>
                     <p>Browse the job board and click the bookmark icon to save jobs for later.</p>
                     <Link to="/jobs" className={styles.browseBtn}>Browse Jobs</Link>
@@ -132,7 +132,7 @@ export default function SavedJobsPage() {
                                 <span className={styles.match}>{j.isRemote ? '🌐 Remote' : '📍 On-site'}</span>
                                 <Link to="/jobs" className={styles.applyBtn}>View</Link>
                                 <button className={styles.removeBtn} onClick={() => removeJob(job.id)}>
-                                    <span className="material-icons-round">close</span>
+                                    <span className="material-symbols-outlined">close</span>
                                 </button>
                             </div>
                         );

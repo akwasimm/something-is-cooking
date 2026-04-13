@@ -39,7 +39,7 @@ def _build_async_url() -> str:
         # Strip any existing driver suffix, then reattach asyncpg
         url = base.split("://", 1)
         if len(url) == 2:
-            return f"postgresql+asyncpg://{url[1]}"
+            return f"postgresql+asyncpg://{url[1]}".replace("sslmode=require", "ssl=require").replace("&channel_binding=require", "")
     # Fallback: build from individual parts
     return (
         f"postgresql+asyncpg://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}"

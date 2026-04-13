@@ -18,10 +18,10 @@ export default function NotFoundPage() {
                 <p>Looks like this link is a dead end. Let's get you back on track!</p>
                 <div className={styles.btns}>
                     <Link to="/dashboard" className={styles.primary}>
-                        <span className="material-icons-round">dashboard</span> Back to Dashboard
+                        <span className="material-symbols-outlined">dashboard</span> Back to Dashboard
                     </Link>
                     <Link to="/jobs" className={styles.secondary}>
-                        <span className="material-icons-round">search</span> Search Jobs
+                        <span className="material-symbols-outlined">search</span> Search Jobs
                     </Link>
                 </div>
             </div>

@@ -11,7 +11,7 @@ import styles from './AuthPage.module.css';
 export default function LoginPage() {
     const { login, loading } = useAuth();
     const navigate = useNavigate();
-    const [form, setForm] = useState({ email: '', password: '' });
+    const [form, setForm] = useState({ email: 'test@gmail.com', password: '123@Test' });
     const [error, setError] = useState('');
 
     /**
@@ -38,7 +38,7 @@ export default function LoginPage() {
                     <div className={styles.field}>
                         <label>Email</label>
                         <div className={styles.inputWrap}>
-                            <span className="material-icons-round">email</span>
+                            <span className="material-symbols-outlined">email</span>
                             <input type="email" placeholder="you@example.com" required
                                 value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
                         </div>
@@ -46,7 +46,7 @@ export default function LoginPage() {
                     <div className={styles.field}>
                         <label>Password</label>
                         <div className={styles.inputWrap}>
-                            <span className="material-icons-round">lock</span>
+                            <span className="material-symbols-outlined">lock</span>
                             <input type="password" placeholder="••••••••" required
                                 value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
                         </div>

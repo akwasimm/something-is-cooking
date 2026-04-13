@@ -7,15 +7,34 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api, setTokens, clearTokens, getToken } from '../api';
 
+// ─────────────────────────────────────────────────────────────
+// DEV BYPASS — set to true to skip login and use a mock user
+// ─────────────────────────────────────────────────────────────
+const DEV_BYPASS = true;
+const MOCK_USER = {
+    id: 'dev-001',
+    email: 'test@jobfor.dev',
+    name: 'Test User',
+    role: 'Software Engineer',
+    avatar: 'T',
+    profile: {
+        firstName: 'Test',
+        lastName: 'User',
+        profileCompletion: 72,
+    },
+};
+// ─────────────────────────────────────────────────────────────
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(DEV_BYPASS ? MOCK_USER : null);
     const [loading, setLoading] = useState(false);
-    const [initializing, setInitializing] = useState(true);
+    const [initializing, setInitializing] = useState(!DEV_BYPASS);
 
     // ── Restore session on mount ────────────────────────────────
     useEffect(() => {
+        if (DEV_BYPASS) return; // skip real restore in bypass mode
         const restore = async () => {
             if (!getToken()) {
                 setInitializing(false);
@@ -35,6 +54,10 @@ export const AuthProvider = ({ children }) => {
 
     // ── Login ───────────────────────────────────────────────────
     const login = async (email, password) => {
+        if (DEV_BYPASS) {
+            setUser(MOCK_USER);
+            return { success: true };
+        }
         setLoading(true);
         try {
             const res = await api.auth.login(email, password);

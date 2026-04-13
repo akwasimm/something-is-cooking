@@ -132,7 +132,7 @@ export default function ProfilePage() {
                             </div>
                             <div>
                                 <button className={styles.uploadBtn}>
-                                    <span className="material-icons-round">upload</span> Upload Photo
+                                    <span className="material-symbols-outlined">upload</span> Upload Photo
                                 </button>
                                 <p>JPG, PNG or GIF. Max 5MB.</p>
                             </div>
@@ -193,7 +193,7 @@ export default function ProfilePage() {
                                         </span>
                                     ))}
                                     <button className={styles.addSkill}>
-                                        <span className="material-icons-round">add</span> Add Skill
+                                        <span className="material-symbols-outlined">add</span> Add Skill
                                     </button>
                                 </div>
                             </>
@@ -206,7 +206,7 @@ export default function ProfilePage() {
                         <div className={styles.cardHead}>
                             <h3>Work Experience</h3>
                             <button className={styles.addBtn}>
-                                <span className="material-icons-round">add</span> Add
+                                <span className="material-symbols-outlined">add</span> Add
                             </button>
                         </div>
                         {loading ? <p style={{ color: '#888' }}>Loading experience…</p> : (
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                         <div className={styles.cardHead}>
                             <h3>Education</h3>
                             <button className={styles.addBtn}>
-                                <span className="material-icons-round">add</span> Add
+                                <span className="material-symbols-outlined">add</span> Add
                             </button>
                         </div>
                         {loading ? <p style={{ color: '#888' }}>Loading education…</p> : (
@@ -260,13 +260,13 @@ export default function ProfilePage() {
                             <h3>Resume Management</h3>
                         </div>
                         <div className={styles.dropzone}>
-                            <span className="material-icons-round">cloud_upload</span>
+                            <span className="material-symbols-outlined">cloud_upload</span>
                             <p>Click to upload or drag and drop</p>
                             <span>(PDF, DOCX max 5MB)</span>
                         </div>
                         {profile?.resumeUrl ? (
                             <div className={styles.resumeItem}>
-                                <span className={`material-icons-round ${styles.resumeIcon}`}>picture_as_pdf</span>
+                                <span className={`material-symbols-outlined ${styles.resumeIcon}`}>picture_as_pdf</span>
                                 <div>
                                     <p>Resume</p>
                                     <a href={profile.resumeUrl} target="_blank" rel="noreferrer" style={{ color: '#4a90e2', fontSize: '0.85rem' }}>

@@ -1,7 +1,11 @@
+/* ============================================================
+   App Layout Shell — full viewport dark canvas
+   ============================================================ */
+
 .layout {
     display: flex;
     min-height: 100vh;
-    background: var(--bg-page);
+    background: var(--bg-base);
 }
 
 .main {
@@ -10,14 +14,20 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-width: 0;
 }
 
 .content {
-    margin-top: 58px;
-    padding: var(--space-6);
+    margin-top: var(--navbar-height);
+    padding: var(--space-6) var(--space-6);
     flex: 1;
+    display: flex;
+    flex-direction: column;
     animation: fadeIn 0.25s ease;
     will-change: opacity, transform;
-    max-width: 1400px;
-    width: 100%;
+}
+
+/* Pages that need full bleed (split-pane job board) get 0 padding via JS */
+.content.fullBleed {
+    padding: 0;
 }

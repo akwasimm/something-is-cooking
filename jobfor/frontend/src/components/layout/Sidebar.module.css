@@ -1,14 +1,16 @@
-/* Sidebar – matches Stitch Dashboard design */
-/* White background, left border nav, green active state */
+/* ============================================================
+   Sidebar — Glassmorphism · 220px / 64px collapsed
+   ============================================================ */
 
 .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     height: 100vh;
-    width: 220px;
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border-light);
+    width: var(--sidebar-width);
+    background: var(--bg-glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-right: var(--glass-border);
     display: flex;
     flex-direction: column;
     z-index: 100;
@@ -17,80 +19,88 @@
 }
 
 .sidebar.collapsed {
-    width: 64px;
+    width: var(--sidebar-collapsed-width);
 }
 
-/* Logo */
+/* ── Logo ───────────────────────────────────────────────────── */
 .logo {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-5) var(--space-4);
-    border-bottom: 1px solid var(--border-light);
-    min-height: 60px;
+    gap: var(--space-3);
+    padding: 0 var(--space-4);
+    border-bottom: var(--glass-border);
+    min-height: var(--navbar-height);
+    flex-shrink: 0;
 }
 
 .logoDot {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    background: var(--color-green);
+    width: 34px; height: 34px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: var(--shadow-glow-primary);
+    transition: transform var(--transition-normal);
 }
 
-.logoDot .material-icons-round {
-    font-size: 17px;
+.logoDot:hover { transform: rotate(8deg) scale(1.05); }
+
+.logoDot .material-symbols-outlined {
+    font-size: 18px;
     color: #fff;
 }
 
 .logoText {
     font-family: var(--font-heading);
-    font-size: var(--font-size-lg);
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 800;
     color: var(--text-primary);
     white-space: nowrap;
+    letter-spacing: -0.5px;
+    overflow: hidden;
 }
 
 .logoPeriod {
-    color: var(--color-green);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-/* Toggle button */
+/* ── Toggle Button ──────────────────────────────────────────── */
 .toggleBtn {
     position: absolute;
-    top: 14px;
-    right: -12px;
-    width: 24px;
-    height: 24px;
+    top: 16px; right: -13px;
+    width: 26px; height: 26px;
     border-radius: 50%;
-    background: var(--bg-card);
-    border: 1px solid var(--border-light);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
     z-index: 10;
     transition: all var(--transition-fast);
+    cursor: pointer;
 }
 
 .toggleBtn:hover {
-    background: var(--color-green);
-    border-color: var(--color-green);
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-glow-primary);
 }
 
-.toggleBtn:hover .material-icons-round {
-    color: #fff;
-}
+.toggleBtn:hover .material-symbols-outlined { color: #fff; }
 
-.toggleBtn .material-icons-round {
+.toggleBtn .material-symbols-outlined {
     font-size: 14px;
     color: var(--text-secondary);
+    transition: color var(--transition-fast);
 }
 
-/* Nav */
+/* ── Nav ────────────────────────────────────────────────────── */
 .nav {
     flex: 1;
     padding: var(--space-4) var(--space-3);
@@ -98,102 +108,141 @@
     flex-direction: column;
     gap: 2px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
+.nav::-webkit-scrollbar { width: 0; }
+
+.navSection {
+    padding: var(--space-4) var(--space-3) var(--space-2);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    font-family: var(--font-mono);
+}
+
+/* Nav items — 44px min touch target */
 .navItem {
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: 9px var(--space-3);
+    padding: 0 var(--space-3);
+    height: 44px;
+    min-height: 44px;
     border-radius: var(--radius-md);
     color: var(--text-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-body-sm);
     font-weight: 500;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-normal);
     white-space: nowrap;
     position: relative;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .navItem:hover {
-    background: var(--color-green-glow);
-    color: var(--color-green);
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--text-primary);
+    transform: translateX(2px);
 }
 
 .navItem.active {
-    background: var(--color-green);
-    color: #fff;
+    background: rgba(99, 102, 241, 0.14);
+    color: var(--color-primary);
     font-weight: 600;
 }
 
-.navItem.active .navIcon {
-    color: #fff;
+/* Left accent indicator */
+.navItem.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 22px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--gradient-primary);
+    box-shadow: 2px 0 8px rgba(99, 102, 241, 0.4);
 }
 
 .navIcon {
-    font-size: 18px;
+    font-size: 20px !important;
     color: inherit;
     flex-shrink: 0;
+    transition: transform var(--transition-fast);
 }
+
+.navItem.active .navIcon { color: var(--color-primary); }
+.navItem:hover .navIcon { transform: scale(1.12); }
 
 .navLabel {
     flex: 1;
     letter-spacing: 0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .badge {
-    background: var(--color-purple-light);
+    background: var(--gradient-primary);
     color: #fff;
     font-size: 10px;
     font-weight: 700;
-    padding: 1px 6px;
+    padding: 2px 7px;
     border-radius: var(--radius-full);
     min-width: 18px;
     text-align: center;
+    line-height: 1.4;
+    font-family: var(--font-mono);
 }
 
-/* Bottom */
+/* ── Bottom Section ─────────────────────────────────────────── */
 .bottom {
     padding: var(--space-3);
-    border-top: 1px solid var(--border-light);
+    border-top: var(--glass-border);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    flex-shrink: 0;
 }
 
-/* User Card */
+/* User card */
 .userCard {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3);
     border-radius: var(--radius-md);
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-light);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     overflow: hidden;
+    transition: background var(--transition-fast);
+    min-height: 44px;
 }
 
+.userCard:hover { background: rgba(99, 102, 241, 0.08); }
+
 .avatar {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 50%;
-    background: var(--color-purple-light);
+    background: var(--gradient-primary);
     color: #fff;
-    font-size: var(--font-size-sm);
+    font-size: 13px;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: var(--shadow-glow-primary);
 }
 
-.userInfo {
-    flex: 1;
-    overflow: hidden;
-}
+.userInfo { flex: 1; overflow: hidden; min-width: 0; }
 
 .userName {
     display: block;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-caption);
     font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
@@ -208,19 +257,23 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: var(--font-mono);
 }
 
 .logoutBtn {
     color: var(--text-muted);
     display: flex;
     align-items: center;
-    transition: color var(--transition-fast);
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
 }
 
 .logoutBtn:hover {
     color: var(--color-error);
+    background: rgba(239, 68, 68, 0.1);
 }
 
-.logoutBtn .material-icons-round {
-    font-size: 16px;
-}
+.logoutBtn .material-symbols-outlined { font-size: 16px; }

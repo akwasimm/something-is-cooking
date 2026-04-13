@@ -16,8 +16,7 @@ router = APIRouter(prefix="/insights", tags=["Analytics & Insights"])
 async def fetch_salary_trend(
     role: str,
     location: Optional[str] = None,
-    db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Real-time dynamically cached salary aggregation calculations scoping jobs specifically by title and location.
@@ -28,8 +27,7 @@ async def fetch_salary_trend(
 @router.get("/skills/demand", response_model=List[SkillDemand])
 async def fetch_job_market_demand(
     limit: int = 20,
-    db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Extract natively indexed tags weighting specific skills as a percentile mapped against the active database.
@@ -40,20 +38,18 @@ async def fetch_job_market_demand(
 @router.get("/skill-gap", response_model=SkillGapResponse)
 async def analyze_career_gap(
     role: str,
-    db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Matches the user's specific skill structure dynamically against the top indexed market demands for a role, explicitly generating an AI-curated curriculum road-map bridging the numeric percentage void.
     """
-    return await InsightsService.analyze_skill_gap(db, current_user.id, role)
+    return await InsightsService.analyze_skill_gap(db, 1, role)
 
 
 @router.get("/companies", response_model=List[CompanyInsightResponse])
 async def fetch_mass_hiring_companies(
     limit: int = 20,
-    db: AsyncSession = Depends(get_async_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Aggregates native database rows sorting companies dynamically tracking Mass Hiring volumes entirely.

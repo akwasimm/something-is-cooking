@@ -52,7 +52,7 @@ export default function RegisterPage() {
             display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.78rem',
             color: ok ? '#4ade80' : '#888', marginBottom: 2
         }}>
-            <span className="material-icons-round" style={{ fontSize: 13 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
                 {ok ? 'check_circle' : 'radio_button_unchecked'}
             </span>
             {label}
@@ -67,7 +67,7 @@ export default function RegisterPage() {
                 <h1>Join the Community</h1>
                 <p className={styles.subtitle}>Join an exclusive community of top-tier professionals.</p>
                 <div className={styles.communityBadge}>
-                    <span className="material-icons-round">diversity_3</span>
+                    <span className="material-symbols-outlined">diversity_3</span>
                     Create Account — Start your journey with JobFor today.
                 </div>
                 <form onSubmit={handleSubmit} className={styles.form}>
@@ -75,7 +75,7 @@ export default function RegisterPage() {
                         <div className={styles.field} style={{ flex: 1, minWidth: 0 }}>
                             <label>First Name</label>
                             <div className={styles.inputWrap}>
-                                <span className="material-icons-round">person</span>
+                                <span className="material-symbols-outlined">person</span>
                                 <input type="text" placeholder="Alex" required
                                     value={form.firstName}
                                     onChange={e => setForm({ ...form, firstName: e.target.value })} />
@@ -84,7 +84,7 @@ export default function RegisterPage() {
                         <div className={styles.field} style={{ flex: 1, minWidth: 0 }}>
                             <label>Last Name</label>
                             <div className={styles.inputWrap}>
-                                <span className="material-icons-round">person</span>
+                                <span className="material-symbols-outlined">person</span>
                                 <input type="text" placeholder="Rivera" required
                                     value={form.lastName}
                                     onChange={e => setForm({ ...form, lastName: e.target.value })} />
@@ -94,7 +94,7 @@ export default function RegisterPage() {
                     <div className={styles.field}>
                         <label>Email</label>
                         <div className={styles.inputWrap}>
-                            <span className="material-icons-round">email</span>
+                            <span className="material-symbols-outlined">email</span>
                             <input type="email" placeholder="you@example.com" required
                                 value={form.email}
                                 onChange={e => setForm({ ...form, email: e.target.value })} />
@@ -103,7 +103,7 @@ export default function RegisterPage() {
                     <div className={styles.field}>
                         <label>Password</label>
                         <div className={styles.inputWrap}>
-                            <span className="material-icons-round">lock</span>
+                            <span className="material-symbols-outlined">lock</span>
                             <input type="password" placeholder="Min 8 chars with A-z, 0-9, !@#" required
                                 value={form.password}
                                 onChange={e => setForm({ ...form, password: e.target.value })} />

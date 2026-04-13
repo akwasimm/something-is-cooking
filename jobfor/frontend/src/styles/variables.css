@@ -1,150 +1,190 @@
-/* ===================================================
-   JobFor Design Tokens – SECOND ONE Stitch Project
-   Light Theme · Work Sans · Green + Purple palette
-   =================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* ============================================================
+   JobFor Design Tokens — Tech-Forward Dark Mode + Glassmorphism
+   Slate-based deep dark theme · Inter · Indigo + Emerald palette
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* === Layout === */
+  /* ── Layout ─────────────────────────────────────────────── */
   --sidebar-width: 220px;
   --sidebar-collapsed-width: 64px;
   --navbar-height: 58px;
 
-  /* === Fonts === */
-  --font-body: 'Work Sans', sans-serif;
-  --font-heading: 'Space Grotesk', 'Work Sans', sans-serif;
+  /* ── Fonts ──────────────────────────────────────────────── */
+  --font-body:    'Inter', sans-serif;
+  --font-heading: 'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
 
+  /* ── Dark Backgrounds (Slate) ───────────────────────────── */
+  --bg-base:     #0F172A;   /* Main page background */
+  --bg-surface:  #1E293B;   /* Solid surfaces — job cards, panels */
+  --bg-surface2: #334155;   /* Hover states / elevated secondary */
+  --bg-card:     #1E293B;   /* alias */
+  --bg-elevated: #334155;   /* alias */
+  --bg-page:     #0F172A;   /* alias */
 
-  /* === Colors === */
-  --color-green: #0d6634;
-  --color-green-light: #1a9c4e;
-  --color-green-dark: #084d26;
-  --color-green-pale: #d4edda;
-  --color-green-glow: rgba(13, 102, 52, 0.08);
+  /* ── Glassmorphism ──────────────────────────────────────── */
+  --bg-glass:    rgba(30, 41, 59, 0.75);
+  --glass-blur:  blur(14px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
 
-  --color-purple: #8b5cf6;
-  --color-purple-light: #c9b8f0;
-  --color-purple-pale: #f0ebff;
-  --color-purple-mid: #b49ee8;
-  --color-purple-glow: rgba(139, 92, 246, 0.1);
+  /* ── Brand & Accent Colors ──────────────────────────────── */
+  --color-primary:       #6366F1;   /* Indigo — primary CTA */
+  --color-primary-dark:  #4F46E5;   /* Hover state for primary */
+  --color-success:       #10B981;   /* Emerald — AI match, quick apply */
+  --color-purple:        #8B5CF6;   /* AI Coach accents */
+  --color-cyan:          #06B6D4;   /* Trending / Hot tags */
+  --color-warning:       #F59E0B;   /* Warnings */
+  --color-error:         #EF4444;   /* Errors */
+  --color-info:          #6366F1;
 
-  --color-yellow: #f59e0b;
-  --color-yellow-pale: #fef3c7;
-  --color-pink: #ec4899;
-  --color-pink-pale: #fce7f3;
-  --color-orange: #f97316;
-  --color-orange-pale: #ffedd5;
+  /* Legacy green aliases — keeps old code from breaking */
+  --color-green:         #10B981;
+  --color-green-light:   #34D399;
+  --color-green-dark:    #059669;
+  --color-green-pale:    rgba(16, 185, 129, 0.12);
+  --color-green-glow:    rgba(16, 185, 129, 0.15);
+  --color-purple-light:  #A78BFA;
+  --color-purple-pale:   rgba(139, 92, 246, 0.12);
+  --color-purple-mid:    #8B5CF6;
+  --color-purple-glow:   rgba(139, 92, 246, 0.15);
+  --color-yellow:        #F59E0B;
+  --color-yellow-pale:   rgba(245, 158, 11, 0.12);
+  --color-pink:          #EC4899;
+  --color-pink-pale:     rgba(236, 72, 153, 0.12);
+  --color-orange:        #F97316;
+  --color-orange-pale:   rgba(249, 115, 22, 0.12);
+  --color-success-dark:  #059669;
 
-  --color-success: #16a34a;
-  --color-error: #dc2626;
-  --color-warning: #d97706;
-  --color-info: #2563eb;
+  /* ── Text & Borders ─────────────────────────────────────── */
+  --text-primary:   #F1F5F9;   /* Slate 100 — headings & body */
+  --text-secondary: #94A3B8;   /* Slate 400 — subtitles, muted */
+  --text-muted:     #64748B;   /* Slate 500 */
+  --text-on-dark:   #F1F5F9;
 
-  /* === Backgrounds === */
-  --bg-base: #f5f5f5;
-  --bg-page: #f8f8f6;
-  --bg-card: #ffffff;
-  --bg-elevated: #fafaf8;
-  --bg-hover: #f0f0ec;
-  --bg-dark: #0a0a0a;
-  --bg-sidebar: #ffffff;
-  --bg-nav: #ffffff;
+  --border-color:   #334155;   /* Slate 700 — dividers, card borders */
+  --border-light:   rgba(255, 255, 255, 0.06);
+  --border-default: #334155;
+  --border-strong:  #475569;
 
-  /* === Text === */
-  --text-primary: #0a0a0a;
-  --text-secondary: #4a4a4a;
-  --text-muted: #888888;
-  --text-on-green: #ffffff;
-  --text-on-dark: #ffffff;
+  /* Legacy nav / sidebar */
+  --bg-hover:   #334155;
+  --bg-dark:    #0F172A;
+  --bg-sidebar: #1E293B;
+  --bg-nav:     rgba(15, 23, 42, 0.85);
 
-  /* === Borders === */
-  --border-light: #e8e8e4;
-  --border-default: #d0d0cc;
-  --border-strong: #999990;
-  --border-green: #0d6634;
-  --border-purple: rgba(139, 92, 246, 0.3);
+  /* ── Gradients ──────────────────────────────────────────── */
+  --gradient-primary: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  --gradient-success: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
+  --gradient-hero:    linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+  --gradient-green:   linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --gradient-purple:  linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+  --gradient-cyan:    linear-gradient(135deg, #06B6D4 0%, #6366F1 100%);
+  --gradient-warm:    linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
 
-  /* === Gradients === */
-  --gradient-green: linear-gradient(135deg, #0d6634 0%, #1a9c4e 100%);
-  --gradient-purple: linear-gradient(135deg, #c9b8f0 0%, #b49ee8 100%);
-  --gradient-hero: linear-gradient(135deg, #0d6634 0%, #1a6b40 50%, #0d6634 100%);
+  /* ── Shadows ────────────────────────────────────────────── */
+  --shadow-sm:           0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md:           0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg:           0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-xl:           0 20px 60px rgba(0, 0, 0, 0.6);
+  --shadow-glow-primary: 0 4px 20px rgba(99, 102, 241, 0.3);
+  --shadow-glow-success: 0 4px 20px rgba(16, 185, 129, 0.3);
+  --shadow-glow-cyan:    0 4px 20px rgba(6, 182, 212, 0.3);
+  --shadow-glow-purple:  0 4px 20px rgba(139, 92, 246, 0.3);
+  --shadow-green:        0 4px 16px rgba(16, 185, 129, 0.25);
 
-  /* === Shadows === */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-green: 0 4px 16px rgba(13, 102, 52, 0.25);
-
-  /* === Spacing === */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
+  /* ── Spacing (4px grid) ─────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  32px;
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
 
-  /* === Radii === */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  /* ── Border Radii ───────────────────────────────────────── */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  20px;
   --radius-full: 9999px;
 
-  /* === Font sizes === */
-  --font-size-xs: 11px;
-  --font-size-sm: 13px;
-  --font-size-base: 15px;
-  --font-size-md: 17px;
-  --font-size-lg: 19px;
-  --font-size-xl: 22px;
-  --font-size-2xl: 26px;
-  --font-size-3xl: 32px;
-  --font-size-4xl: 40px;
-  --font-size-5xl: 52px;
+  /* ── Type Scale ─────────────────────────────────────────── */
+  --font-size-display: 48px;   /* Hero text only */
+  --font-size-h1:      36px;   /* Page titles */
+  --font-size-h2:      30px;   /* Major section headers */
+  --font-size-h3:      24px;   /* Card / modal headings */
+  --font-size-h4:      20px;   /* Job title sized text */
+  --font-size-body-lg: 18px;   /* Intro paragraphs */
+  --font-size-body:    16px;   /* Standard body */
+  --font-size-body-sm: 14px;   /* Secondary info */
+  --font-size-caption: 12px;   /* Labels, timestamps */
 
-  /* === Transitions === */
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s ease;
+  /* Legacy aliases */
+  --font-size-xs:   12px;
+  --font-size-sm:   14px;
+  --font-size-base: 16px;
+  --font-size-md:   18px;
+  --font-size-lg:   20px;
+  --font-size-xl:   24px;
+  --font-size-2xl:  30px;
+  --font-size-3xl:  36px;
+  --font-size-4xl:  48px;
+  --font-size-5xl:  60px;
+
+  /* ── Transitions ─────────────────────────────────────────── */
+  --transition-fast:   0.12s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow:   0.35s ease;
 }
 
+/* ── Global Keyframes ────────────────────────────────────────── */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
 
-  0%,
-  100% {
-    opacity: 1;
-  }
+@keyframes shimmer {
+  0%   { background-position: -400% center; }
+  100% { background-position:  400% center; }
+}
 
-  50% {
-    opacity: 0.6;
-  }
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(99, 102, 241, 0.3); }
+  50%       { box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
 }

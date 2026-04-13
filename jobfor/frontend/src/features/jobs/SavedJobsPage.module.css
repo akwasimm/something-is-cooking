@@ -1,67 +1,81 @@
-/* Saved Jobs – matches actual SavedJobsPage.jsx class names */
+/* ============================================================
+   Saved Jobs — dark mode, matches SavedJobsPage.jsx class names
+   ============================================================ */
 
 .page {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    animation: fadeIn 0.3s ease;
+    gap: var(--space-5);
+    animation: fadeIn 0.25s ease;
 }
 
 .header {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
 }
 
 .header h1 {
-    font-family: var(--font-heading);
-    font-size: 22px;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: #1a1a1a;
-    margin-bottom: 2px;
+    font-size: var(--font-size-h3);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
 }
 
 .header p {
-    font-size: 13px;
-    color: #888;
+    font-size: var(--font-size-body-sm);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
 }
 
+/* ── Skeleton ─────────────────────────────────────────────── */
+@keyframes skeletonPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.35; }
+}
+
+/* ── List wrapper ─────────────────────────────────────────── */
 .list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
+/* ── Job Card ─────────────────────────────────────────────── */
 .card {
     display: flex;
     align-items: center;
-    gap: 14px;
-    background: #fff;
-    border: 1.5px solid #e8e8e8;
-    border-radius: 14px;
-    padding: 18px;
-    transition: all 0.15s;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+    animation: fadeIn 0.2s ease;
 }
 
 .card:hover {
-    border-color: var(--color-green);
-    box-shadow: 0 4px 16px rgba(13, 102, 52, 0.07);
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
 }
 
 .logo {
-    width: 46px;
-    height: 46px;
-    border-radius: 10px;
-    background: var(--color-green);
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-primary);
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
     flex-shrink: 0;
     font-family: var(--font-heading);
+    box-shadow: var(--shadow-glow-primary);
+    overflow: hidden;
 }
 
 .info {
@@ -70,134 +84,154 @@
 }
 
 .info h3 {
-    font-size: 15px;
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 2px;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .info p {
-    font-size: 13px;
-    color: #888;
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
 .meta {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     gap: 4px;
-    flex-shrink: 0;
+    align-items: flex-end;
 }
 
 .salary {
-    font-size: 13px;
+    font-size: var(--font-size-caption);
     font-weight: 700;
     color: var(--color-success);
+    font-family: var(--font-mono);
 }
 
 .savedTime {
     font-size: 11px;
-    color: #bbb;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
 }
 
 .match {
-    font-family: var(--font-heading);
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--color-green);
-    background: var(--color-green-pale);
-    padding: 4px 10px;
-    border-radius: 50px;
-    flex-shrink: 0;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    color: var(--color-primary);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    white-space: nowrap;
 }
 
 .applyBtn {
-    padding: 9px 20px;
-    background: var(--color-green);
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 18px;
+    background: var(--gradient-primary);
     color: #fff;
-    border-radius: 50px;
-    font-size: 13px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-caption);
     font-weight: 700;
-    transition: background 0.15s;
-    flex-shrink: 0;
+    text-decoration: none;
+    transition: all var(--transition-normal);
+    font-family: var(--font-body);
     white-space: nowrap;
-    box-shadow: 0 2px 10px rgba(13, 102, 52, 0.2);
+    flex-shrink: 0;
 }
 
 .applyBtn:hover {
-    background: #0a5228;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-glow-primary);
 }
 
-/* Empty state */
+.removeBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.removeBtn:hover {
+    border-color: var(--color-error);
+    color: var(--color-error);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.removeBtn .material-symbols-outlined,
+.removeBtn .material-symbols-outlined { font-size: 18px; }
+
+/* ── Empty state ────────────────────────────────────────────── */
 .empty {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    padding: 64px 24px;
-    background: #fff;
-    border: 1.5px dashed #e0e0e0;
-    border-radius: 16px;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-12);
     text-align: center;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
 }
 
-.empty .material-icons-round {
-    font-size: 52px;
-    color: #ddd;
+.empty .material-symbols-outlined,
+.empty .material-symbols-outlined {
+    font-size: 48px;
+    opacity: 0.3;
+    display: block;
 }
 
 .empty h3 {
-    font-size: 18px;
+    font-size: var(--font-size-h4);
     font-weight: 700;
-    color: #888;
+    color: var(--text-secondary);
 }
 
 .empty p {
-    font-size: 14px;
-    color: #bbb;
-    max-width: 320px;
+    font-size: var(--font-size-body-sm);
+    color: var(--text-muted);
+    max-width: 300px;
+    line-height: 1.6;
 }
 
 .browseBtn {
-    padding: 10px 28px;
-    background: var(--color-green);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 40px;
+    padding: 0 22px;
+    background: var(--gradient-primary);
     color: #fff;
-    border-radius: 50px;
-    font-size: 13px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    margin-top: 6px;
-    transition: background 0.15s;
-    display: inline-block;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-family: var(--font-body);
+    box-shadow: var(--shadow-glow-primary);
+    margin-top: var(--space-2);
 }
 
 .browseBtn:hover {
-    background: #0a5228;
-}
-
-.removeBtn {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    border: 1px solid #e8e8e8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: #fff;
-}
-
-.removeBtn .material-icons-round {
-    font-size: 16px;
-    color: #ccc;
-}
-
-.removeBtn:hover {
-    border-color: #f87171;
-    background: #fff5f5;
-}
-
-.removeBtn:hover .material-icons-round {
-    color: #ef4444;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
 }

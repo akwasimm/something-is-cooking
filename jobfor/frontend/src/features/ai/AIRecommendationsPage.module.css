@@ -1,343 +1,349 @@
-/* AI Recommendations – matches actual AIRecommendationsPage.jsx class names */
+/* ============================================================
+   AI Recommendations — dark mode, matches AIRecommendationsPage.jsx
+   ============================================================ */
 
 .page {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    animation: fadeIn 0.3s ease;
+    gap: var(--space-5);
+    animation: fadeIn 0.25s ease;
 }
 
-/* Badge */
+/* ── Badge ───────────────────────────────────────────────────── */
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: var(--color-purple-pale);
+    gap: var(--space-2);
+    background: rgba(139, 92, 246, 0.1);
     color: var(--color-purple);
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 50px;
+    padding: 5px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(139, 92, 246, 0.2);
     width: fit-content;
+    font-family: var(--font-mono);
 }
 
-.badge .material-icons-round {
-    font-size: 16px;
-}
+.badge .material-symbols-outlined { font-size: 14px; }
 
-/* Section label */
+/* ── Section label ───────────────────────────────────────────── */
 .sectionLabel {
     font-family: var(--font-heading);
-    font-size: 12px;
+    font-size: var(--font-size-caption);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
 }
 
-/* Top Picks Grid */
+/* ── Top Picks Grid ──────────────────────────────────────────── */
 .topPicksGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: var(--space-4);
 }
 
 @media (max-width: 900px) {
-    .topPicksGrid {
-        grid-template-columns: 1fr;
-    }
+    .topPicksGrid { grid-template-columns: 1fr; }
 }
 
-/* Pick card */
+/* ── Pick card ───────────────────────────────────────────────── */
 .pickCard {
-    background: #fff;
-    border: 1.5px solid #e8e8e8;
-    border-radius: 14px;
-    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-4);
     position: relative;
-    transition: all 0.2s;
+    transition: all var(--transition-normal);
 }
 
 .pickCard:hover {
-    border-color: var(--color-green);
-    box-shadow: 0 4px 20px rgba(13, 102, 52, 0.09);
-    transform: translateY(-2px);
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
 }
 
-/* Featured variant */
+/* Featured — best match */
 .pickCard.featured {
-    border-color: var(--color-green);
-    background: var(--color-green-glow);
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(99, 102, 241, 0.06);
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
 }
 
 .featuredTag {
     position: absolute;
-    top: -10px;
-    left: 16px;
-    background: var(--color-green);
+    top: -11px;
+    left: var(--space-4);
+    background: var(--gradient-primary);
     color: #fff;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 50px;
+    padding: 3px 12px;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-glow-primary);
+    font-family: var(--font-mono);
 }
 
-/* Pick top row */
+/* ── Pick top ────────────────────────────────────────────────── */
 .pickTop {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
 .pickLogo {
     width: 44px;
     height: 44px;
-    border-radius: 10px;
-    background: var(--color-purple-pale);
-    color: var(--color-purple);
+    border-radius: var(--radius-md);
+    background: var(--gradient-purple);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 800;
     flex-shrink: 0;
     font-family: var(--font-heading);
 }
 
-.pickInfo {
-    flex: 1;
-    min-width: 0;
-}
+.pickInfo { flex: 1; min-width: 0; }
 
 .pickInfo h3 {
-    font-size: 15px;
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .pickInfo p {
-    font-size: 13px;
-    color: #888;
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
 .salary {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--font-size-caption);
+    font-weight: 700;
     color: var(--color-success);
     display: block;
     margin-top: 3px;
+    font-family: var(--font-mono);
 }
 
 .matchBig {
-    font-family: var(--font-heading);
-    font-size: 26px;
-    font-weight: 900;
-    color: var(--color-green);
-    line-height: 1;
+    font-size: 22px;
     flex-shrink: 0;
 }
 
-/* Reasons */
+/* ── Reasons ─────────────────────────────────────────────────── */
 .reasons {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--space-2);
 }
 
 .reason {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: #555;
+    gap: var(--space-2);
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
-.reason .material-icons-round {
-    font-size: 15px;
+.reason .material-symbols-outlined {
+    font-size: 14px;
     color: var(--color-success);
     flex-shrink: 0;
 }
 
-/* Apply Button */
+/* ── Apply Button ────────────────────────────────────────────── */
 .applyBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     padding: 10px;
-    background: var(--color-green);
+    background: var(--gradient-primary);
     color: #fff;
-    border-radius: 50px;
-    font-size: 13px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-caption);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    transition: background 0.15s;
-    box-shadow: 0 2px 12px rgba(13, 102, 52, 0.2);
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-glow-primary);
+    text-decoration: none;
 }
 
 .applyBtn:hover {
-    background: #0a5228;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
 }
 
-/* Two column layout */
+/* ── Two column ──────────────────────────────────────────────── */
 .twoCol {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: var(--space-4);
 }
 
 @media (max-width: 900px) {
-    .twoCol {
-        grid-template-columns: 1fr;
-    }
+    .twoCol { grid-template-columns: 1fr; }
 }
 
-/* Shared card */
+/* ── Shared card ─────────────────────────────────────────────── */
 .card {
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 14px;
-    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
 .cardTitle {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-family: var(--font-heading);
-    font-size: 12px;
+    gap: var(--space-2);
+    font-size: var(--font-size-caption);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #1a1a1a;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
 }
 
-.cardTitle .material-icons-round {
-    color: var(--color-green);
-    font-size: 17px;
+.cardTitle .material-symbols-outlined {
+    color: var(--color-primary);
+    font-size: 16px;
 }
 
-/* Simple row (new jobs) */
+/* ── Simple row (new jobs) ───────────────────────────────────── */
 .simpleRow {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    border: 1px solid #eee;
-    transition: all 0.15s;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all var(--transition-normal);
 }
 
 .simpleRow:hover {
-    border-color: var(--color-green);
+    border-color: rgba(99, 102, 241, 0.25);
+    background: rgba(99, 102, 241, 0.05);
 }
 
-.simpleRow>div {
-    flex: 1;
-    min-width: 0;
-}
+.simpleRow > div { flex: 1; min-width: 0; }
 
 .simpleRow h3 {
-    font-size: 13px;
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .simpleRow p {
-    font-size: 12px;
-    color: #888;
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
-/* Missed row */
+/* ── Missed row (recently posted) ───────────────────────────── */
 .missedRow {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: #fff5f5;
-    border-radius: 10px;
-    border: 1px solid #fee2e2;
-    transition: all 0.15s;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    transition: all var(--transition-normal);
 }
 
-.missedRow>div {
-    flex: 1;
-    min-width: 0;
-}
+.missedRow > div { flex: 1; min-width: 0; }
 
 .missedRow h3 {
-    font-size: 13px;
+    font-size: var(--font-size-body-sm);
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .missedRow p {
-    font-size: 12px;
-    color: #888;
+    font-size: var(--font-size-caption);
+    color: var(--text-secondary);
 }
 
 .missedNote {
     display: inline-block;
     font-size: 11px;
-    color: #ef4444;
-    font-weight: 500;
+    color: var(--color-warning);
+    font-weight: 600;
     margin-top: 3px;
+    font-family: var(--font-mono);
 }
 
-/* Match badge (% score for new/missed rows) */
+/* ── Match badge ─────────────────────────────────────────────── */
 .matchSm {
-    font-family: var(--font-heading);
-    font-size: 16px;
-    font-weight: 900;
-    color: var(--color-green);
+    font-size: 18px;
     flex-shrink: 0;
-    min-width: 38px;
+    min-width: 28px;
     text-align: right;
 }
 
-/* Quick Apply button */
+/* ── Quick View button ───────────────────────────────────────── */
 .quickBtn {
-    padding: 7px 14px;
-    background: var(--color-green);
+    padding: 6px 14px;
+    background: var(--gradient-primary);
     color: #fff;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-    transition: background 0.15s;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+    transition: all var(--transition-normal);
     flex-shrink: 0;
     white-space: nowrap;
+    text-decoration: none;
+    box-shadow: var(--shadow-glow-primary);
 }
 
 .quickBtn:hover {
-    background: #0a5228;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
 }
 
-/* Alert me button */
+/* ── Alert button ────────────────────────────────────────────── */
 .alertBtn {
-    padding: 7px 14px;
-    border: 1.5px solid #fca5a5;
-    color: #ef4444;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-    transition: all 0.15s;
+    padding: 6px 14px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: var(--color-primary);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+    transition: all var(--transition-normal);
     flex-shrink: 0;
     white-space: nowrap;
-    background: #fff;
+    background: rgba(99, 102, 241, 0.06);
+    text-decoration: none;
 }
 
 .alertBtn:hover {
-    background: #ef4444;
+    background: var(--color-primary);
     color: #fff;
-    border-color: #ef4444;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-glow-primary);
 }

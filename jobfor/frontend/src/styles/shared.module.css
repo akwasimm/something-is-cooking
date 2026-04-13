@@ -1,0 +1,334 @@
+/* ============================================================
+   Shared primitives for all inner feature pages
+   Adheres strictly to the Tech-Forward Dark Mode design system
+   ============================================================ */
+
+/* ── Page shell ─────────────────────────────────────────────── */
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    animation: fadeIn 0.25s ease;
+    min-height: 0;
+    padding-bottom: var(--space-8);
+}
+
+/* ── Page header ─────────────────────────────────────────────── */
+.pageHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.pageHeader h1 {
+    /* H3 per spec → 24px / w700 for page inner titles */
+    font-family: var(--font-heading);
+    font-size: var(--font-size-h3);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.pageHeader p {
+    font-size: var(--font-size-body-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+    line-height: 1.6;
+}
+
+/* ── Section label ───────────────────────────────────────────── */
+.sectionLabel {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+}
+
+/* ── Generic card (solid surface) ────────────────────────────── */
+.card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
+}
+
+.card:hover {
+    border-color: rgba(99, 102, 241, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+/* ── Glassmorphic card (floating surfaces) ───────────────────── */
+.glassCard {
+    background: var(--bg-glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+}
+
+/* ── Card header ─────────────────────────────────────────────── */
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.cardHeader h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+}
+
+.cardHeader h2 .material-symbols-outlined {
+    color: var(--color-primary);
+    font-size: 16px;
+}
+
+/* ── Skeleton shimmer ────────────────────────────────────────── */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0.04) 25%,
+        rgba(255,255,255,0.09) 50%,
+        rgba(255,255,255,0.04) 75%
+    );
+    background-size: 400% 100%;
+    border-radius: var(--radius-md);
+    animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-12) var(--space-8);
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.empty .material-symbols-outlined {
+    font-size: 52px;
+    opacity: 0.3;
+    display: block;
+}
+
+.empty h3 {
+    font-size: var(--font-size-h4);
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+}
+
+.empty p {
+    font-size: var(--font-size-body-sm);
+    color: var(--text-muted);
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+/* ── Primary CTA button ─────────────────────────────────────── */
+.browseBtn,
+.primaryBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 42px;
+    padding: 0 var(--space-5);
+    background: var(--gradient-primary);
+    color: #fff;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-body-sm);
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-family: var(--font-body);
+    box-shadow: var(--shadow-glow-primary);
+    margin-top: var(--space-2);
+}
+
+.browseBtn:hover,
+.primaryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(99, 102, 241, 0.45);
+}
+
+.browseBtn .material-symbols-outlined,
+.primaryBtn .material-symbols-outlined { font-size: 18px; }
+
+/* ── Outlined secondary button ──────────────────────────────── */
+.outlineBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 38px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-caption);
+    font-weight: 600;
+    background: transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-family: var(--font-body);
+    text-decoration: none;
+}
+
+.outlineBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: rgba(99, 102, 241, 0.07);
+    transform: translateY(-1px);
+}
+
+/* ── Success CTA button ─────────────────────────────────────── */
+.successBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 38px;
+    padding: 0 var(--space-4);
+    background: var(--gradient-success);
+    color: #fff;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-caption);
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-family: var(--font-body);
+    box-shadow: var(--shadow-glow-success);
+}
+
+.successBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
+}
+
+/* ── Skill tag (JetBrains Mono) ─────────────────────────────── */
+.skillTag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-caption);
+    font-weight: 600;
+    color: var(--color-primary);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.skillTag:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.35);
+}
+
+/* Cyan trending / hot tag */
+.hotTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 10px;
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hotTag .material-symbols-outlined { font-size: 11px; }
+
+/* ── Status badges (all use font-mono) ──────────────────────── */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+
+.statusBadge.info {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--color-primary);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+.statusBadge.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.statusBadge.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--color-warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+.statusBadge.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-error);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.statusBadge.brand {
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--color-primary);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+}
+.statusBadge.cyan {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--color-cyan);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+.statusBadge.purple {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--color-purple);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+/* ── Link ────────────────────────────────────────────────────── */
+.seeAll {
+    font-size: var(--font-size-caption);
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.seeAll:hover { opacity: 1; }
+
+/* ── Divider ─────────────────────────────────────────────────── */
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: var(--space-5) 0;
+}

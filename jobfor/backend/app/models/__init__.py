@@ -31,6 +31,13 @@ from app.models.models import (  # noqa: F401
     JobAlert,
     Notification,
     MarketInsightCache,
+    # §8 User Assets
+    JobCollection,
+    UserResume,
+    # §9 AI Recommendations & Extras
+    AIJobRecommendation,
+    AICoachTip,
+    ResumeAnalysis,
 )
 
 __all__ = [
@@ -51,4 +58,11 @@ __all__ = [
     "JobAlert",
     "Notification",
     "MarketInsightCache",
+    # §8
+    "JobCollection",
+    "UserResume",
+    # §9
+    "AIJobRecommendation",
+    "AICoachTip",
+    "ResumeAnalysis",
 ]

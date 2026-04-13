@@ -131,7 +131,7 @@ export default function MarketInsightsPage() {
     return (
         <div className={styles.page}>
             <div className={styles.badge}>
-                <span className="material-icons-round">insights</span> MARKET INSIGHTS
+                <span className="material-symbols-outlined">insights</span> MARKET INSIGHTS
                 {loading && <span style={{ marginLeft: 8, fontSize: '0.75rem', opacity: 0.6 }}>Loading…</span>}
             </div>
 
@@ -141,7 +141,7 @@ export default function MarketInsightsPage() {
                     border: '1px solid rgba(255,107,107,0.2)', borderRadius: 10, display: 'flex',
                     alignItems: 'center', gap: 10
                 }}>
-                    <span className="material-icons-round" style={{ color: '#ff6b6b' }}>wifi_off</span>
+                    <span className="material-symbols-outlined" style={{ color: '#ff6b6b' }}>wifi_off</span>
                     <span style={{ flex: 1, color: '#ff8080', fontSize: '0.9rem' }}>
                         Couldn't load live data — showing default estimates
                     </span>
@@ -157,7 +157,7 @@ export default function MarketInsightsPage() {
             <div className={styles.statsGrid}>
                 {MARKET_STATS.map((s) => (
                     <div key={s.label} className={styles.statCard}>
-                        <span className={`material-icons-round ${styles.statIcon}`}>{s.icon}</span>
+                        <span className={`material-symbols-outlined ${styles.statIcon}`}>{s.icon}</span>
                         <div className={styles.statVal}>{s.value}</div>
                         <div className={styles.statLabel}>{s.label}</div>
                         <span className={`${styles.change} ${s.up ? styles.up : styles.down}`}>{s.change}</span>
@@ -169,7 +169,7 @@ export default function MarketInsightsPage() {
                 {/* Salary by Level */}
                 <section className={styles.card}>
                     <div className={styles.cardHeader}>
-                        <h2><span className="material-icons-round">payments</span> Salary Insights by Level</h2>
+                        <h2><span className="material-symbols-outlined">payments</span> Salary Insights by Level</h2>
                         <span className={styles.tag}>All Roles · INR</span>
                     </div>
                     <p className={styles.cardSub}>
@@ -190,7 +190,7 @@ export default function MarketInsightsPage() {
                 {/* Hiring Trend */}
                 <section className={styles.card}>
                     <div className={styles.cardHeader}>
-                        <h2><span className="material-icons-round">trending_up</span> Market Overview</h2>
+                        <h2><span className="material-symbols-outlined">trending_up</span> Market Overview</h2>
                         <span className={styles.tag}>Last 6 months</span>
                     </div>
                     <p className={styles.cardSub}>Tech job postings are <strong>up +28%</strong> compared to last quarter.</p>
@@ -216,7 +216,7 @@ export default function MarketInsightsPage() {
             {topSkills.length > 0 && (
                 <section className={styles.card}>
                     <div className={styles.cardHeader}>
-                        <h2><span className="material-icons-round">psychology</span> Top Skills in Demand</h2>
+                        <h2><span className="material-symbols-outlined">psychology</span> Top Skills in Demand</h2>
                         <span className={styles.tag}>From job listings</span>
                     </div>
                     <div className={styles.companiesGrid}>
@@ -240,7 +240,7 @@ export default function MarketInsightsPage() {
             {/* Top Companies from DB */}
             <section className={styles.card}>
                 <div className={styles.cardHeader}>
-                    <h2><span className="material-icons-round">business</span> Top Hiring Companies</h2>
+                    <h2><span className="material-symbols-outlined">business</span> Top Hiring Companies</h2>
                 </div>
                 {loading ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -271,7 +271,7 @@ export default function MarketInsightsPage() {
 
             {/* CTA */}
             <div className={styles.cta}>
-                <span className="material-icons-round">rocket_launch</span>
+                <span className="material-symbols-outlined">rocket_launch</span>
                 <div>
                     <h3>Ready to leverage these insights?</h3>
                     <p>Tailor your applications based on real market data.</p>
